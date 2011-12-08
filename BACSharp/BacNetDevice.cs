@@ -27,10 +27,8 @@ namespace BACSharp
         public byte InvokeId
         {
             get 
-            {
-                byte tmp = _invokeId;
-                _invokeId = (_invokeId == 255) ? (byte)0 : (byte)(_invokeId + 1);
-                return tmp;
+            {               
+                return _invokeId++;
             }           
         }
         public uint DeviceId { get; set; }
