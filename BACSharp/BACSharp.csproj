@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{510D4E0B-29C0-44CB-83ED-BECEA483C698}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BACSharp</RootNamespace>
+    <AssemblyName>BACSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="APDU\ConfirmedRequest.cs" />
+    <Compile Include="APDU\IBacNetApdu.cs" />
+    <Compile Include="APDU\UnconfirmedRequest.cs" />
+    <Compile Include="BacNetEnums.cs" />
+    <Compile Include="BacNetListener.cs" />
+    <Compile Include="BacNetResponse.cs" />
+    <Compile Include="BacNetServices.cs" />
+    <Compile Include="BacNetDevice.cs" />
+    <Compile Include="ByteConverter.cs" />
+    <Compile Include="Network\BacNetIpNetwork.cs" />
+    <Compile Include="Network\IBacNetNetwork.cs" />
+    <Compile Include="NPDU\BacNetIpNpdu.cs" />
+    <Compile Include="NPDU\IBacNetNpdu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Acknowledgement\AckServices.cs" />
+    <Compile Include="Services\Acknowledgement\ReadPropertyAck.cs" />
+    <Compile Include="Services\Acknowledgement\SegmentAck.cs" />
+    <Compile Include="Services\Acknowledgement\SimpleAck.cs" />
+    <Compile Include="Services\Confirmed\ConfirmedServices.cs" />
+    <Compile Include="Services\Confirmed\WriteProperty.cs" />
+    <Compile Include="Services\Confirmed\ReadProperty.cs" />
+    <Compile Include="Services\IBacNetService.cs" />
+    <Compile Include="Services\Unconfirmed\IAm.cs" />
+    <Compile Include="Services\Unconfirmed\UnconfirmedServices.cs" />
+    <Compile Include="Services\Unconfirmed\WhoIs.cs" />
+    <Compile Include="Types\BacNetAddress.cs" />
+    <Compile Include="Types\BacNetBool.cs" />
+    <Compile Include="Types\BacNetDouble.cs" />
+    <Compile Include="Types\BacNetEnumeration.cs" />
+    <Compile Include="Types\BacNetInt.cs" />
+    <Compile Include="Types\BacNetRawMessage.cs" />
+    <Compile Include="Types\BacNetReal.cs" />
+    <Compile Include="Types\BacNetRemoteDevice.cs" />
+    <Compile Include="Types\BacNetObject.cs" />
+    <Compile Include="Types\BacNetProperty.cs" />
+    <Compile Include="Types\BacNetString.cs" />
+    <Compile Include="Types\BacNetTag.cs" />
+    <Compile Include="Types\BacNetUInt.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
