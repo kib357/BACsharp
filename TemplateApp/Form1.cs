@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,14 +19,25 @@ namespace TemplateApp
 {
     public partial class Form1 : Form
     {
-        private readonly BacNetDevice _device;
+        private BacNetDevice _device;
 
         public Form1()
         {
             InitializeComponent();
             _device = BacNetDevice.Instance;
             _device.DeviceId = 357;
-            _device.Network = new BacNetIpNetwork(IPAddress.Parse("192.168.0.255"));
+            foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
+                if (f.OperationalStatus == OperationalStatus.Up)
+                {
+                    IPInterfaceProperties p = f.GetIPProperties();
+                    foreach (var s in p.UnicastAddresses)
+                    {
+                        if (s.IPv4Mask != null && s.IPv4Mask.ToString() != "0.0.0.0")
+                        {
+                            comboBox1.Items.Add(s.Address + " " + s.IPv4Mask);
+                        }
+                    }
+                }
         }
 
         private void whoIsButton_Click(object sender, EventArgs e)
@@ -87,6 +99,13 @@ namespace TemplateApp
                     }
                 }
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            IPAddress address = IPAddress.Parse(comboBox1.SelectedItem.ToString().Split(' ')[0]);
+            IPAddress mask = IPAddress.Parse(comboBox1.SelectedItem.ToString().Split(' ')[1]);
+            _device.Network = new BacNetIpNetwork(address, mask);
         }
     }
 }

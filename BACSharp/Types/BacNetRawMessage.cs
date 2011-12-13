@@ -86,7 +86,7 @@ namespace BACSharp.Types
 
         private int NpduLength(byte[] message)
         {
-            if (_bvlc.Length + 2 < message.Length)
+            if (_bvlc.Length + 2 > message.Length)
                 return 0;
             int npduLength = 2, npduStart = _bvlc.Length;
             if (npduStart > 3)

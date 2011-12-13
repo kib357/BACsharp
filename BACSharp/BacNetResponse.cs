@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Net;
 using BACSharp.NPDU;
 using BACSharp.Services.Acknowledgement;
@@ -124,6 +125,15 @@ namespace BACSharp
             ReadPropertyAck apdu = new ReadPropertyAck(msg.Apdu);
             if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
                 BacNetDevice.Instance.Waiter = apdu.ValueList;
+        }
+
+        public void ReceivedErrorAck(BacNetRawMessage msg)
+        {
+            ErrorAck apdu = new ErrorAck(msg.Apdu);
+            ArrayList res = new ArrayList();
+            res.Add(apdu.ErrorCode);
+            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+                BacNetDevice.Instance.Waiter = res;
         }
 
         #endregion

@@ -34,20 +34,21 @@
             this.writePropertyButton = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 12);
+            this.listBox1.Location = new System.Drawing.Point(11, 46);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(127, 277);
+            this.listBox1.Size = new System.Drawing.Size(200, 277);
             this.listBox1.TabIndex = 0;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // whoIsButton
             // 
-            this.whoIsButton.Location = new System.Drawing.Point(12, 295);
+            this.whoIsButton.Location = new System.Drawing.Point(11, 329);
             this.whoIsButton.Name = "whoIsButton";
             this.whoIsButton.Size = new System.Drawing.Size(75, 23);
             this.whoIsButton.TabIndex = 1;
@@ -57,7 +58,7 @@
             // 
             // readPropertyButton
             // 
-            this.readPropertyButton.Location = new System.Drawing.Point(93, 295);
+            this.readPropertyButton.Location = new System.Drawing.Point(92, 329);
             this.readPropertyButton.Name = "readPropertyButton";
             this.readPropertyButton.Size = new System.Drawing.Size(98, 23);
             this.readPropertyButton.TabIndex = 2;
@@ -67,7 +68,7 @@
             // 
             // writePropertyButton
             // 
-            this.writePropertyButton.Location = new System.Drawing.Point(197, 295);
+            this.writePropertyButton.Location = new System.Drawing.Point(196, 329);
             this.writePropertyButton.Name = "writePropertyButton";
             this.writePropertyButton.Size = new System.Drawing.Size(88, 23);
             this.writePropertyButton.TabIndex = 3;
@@ -78,7 +79,7 @@
             // listBox2
             // 
             this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(145, 12);
+            this.listBox2.Location = new System.Drawing.Point(217, 46);
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(302, 277);
             this.listBox2.TabIndex = 4;
@@ -86,16 +87,26 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(453, 12);
+            this.textBox1.Location = new System.Drawing.Point(525, 46);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 5;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(13, 13);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(198, 21);
+            this.comboBox1.TabIndex = 6;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(709, 365);
+            this.ClientSize = new System.Drawing.Size(636, 368);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.listBox2);
             this.Controls.Add(this.writePropertyButton);
@@ -117,6 +128,7 @@
         private System.Windows.Forms.Button writePropertyButton;
         private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

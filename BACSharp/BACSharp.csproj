@@ -59,6 +59,7 @@
     <Compile Include="NPDU\IBacNetNpdu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Acknowledgement\AckServices.cs" />
+    <Compile Include="Services\Acknowledgement\ErrorAck.cs" />
     <Compile Include="Services\Acknowledgement\ReadPropertyAck.cs" />
     <Compile Include="Services\Acknowledgement\SegmentAck.cs" />
     <Compile Include="Services\Acknowledgement\SimpleAck.cs" />
