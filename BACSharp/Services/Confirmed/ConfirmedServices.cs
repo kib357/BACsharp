@@ -51,16 +51,16 @@ namespace BACSharp.Services.Confirmed
 
         public ArrayList WaitForResponce(int invokeId, int timeOut = 1000)
         {
-            BacNetDevice.Instance.Water = invokeId;
+            BacNetDevice.Instance.Waiter = invokeId;
             int sleep = 5, time = 0;
-            while (BacNetDevice.Instance.Water is int && Convert.ToInt32(BacNetDevice.Instance.Water) == invokeId)
+            while (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == invokeId)
             {
                 Thread.Sleep(sleep);
                 time += sleep;
                 if (time >= timeOut) break;
             }
-            if (BacNetDevice.Instance.Water is ArrayList)
-                return BacNetDevice.Instance.Water as ArrayList;
+            if (BacNetDevice.Instance.Waiter is ArrayList)
+                return BacNetDevice.Instance.Waiter as ArrayList;
             return null;
         }
     }

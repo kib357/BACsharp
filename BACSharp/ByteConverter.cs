@@ -52,7 +52,7 @@ namespace BACSharp
             switch (metaTag.Number)
             {
                 case 1: //UNSIGNED_INT
-                    BacNetBool boolValue = new BacNetBool(apdu, len, metaTag.Length, ref len);
+                    BacNetBool boolValue = new BacNetBool(metaTag);
                     res = boolValue;
                     break;
                 case 2: //UNSIGNED_INT

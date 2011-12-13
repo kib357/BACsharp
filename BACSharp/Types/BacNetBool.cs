@@ -12,10 +12,14 @@ namespace BACSharp.Types
         public BacNetBool()
         {}
 
-        public BacNetBool(byte[] apdu, int startIndex, int length, ref int len)
+        public BacNetBool(BacNetTag boolTag)
         {
-            Value = (apdu[startIndex] & 1) == 1;
-            len += length;
+            Value = (boolTag.Length & 1) == 1;
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
         }
 
         public int GetLength()

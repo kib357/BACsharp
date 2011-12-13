@@ -14,6 +14,7 @@ namespace BACSharp
 {
     public class BacNetListener
     {
+        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private UdpClient _udpReceiveClient;
         private volatile bool Listen;
         private readonly int _udpPort;
@@ -44,8 +45,7 @@ namespace BACSharp
                 }
                 catch (Exception e)
                 {
-                    Listen = false;
-                    _udpReceiveClient.Close();
+                    _logger.Error(e);
                 }
                 ParseBacNetMessage(bytes, groupEP);
             }
@@ -57,7 +57,13 @@ namespace BACSharp
                 return;
 
             BacNetRawMessage msg = new BacNetRawMessage();
-            msg.All = bytes;            
+            msg.All = bytes;
+            if (msg.All == null)
+            {
+                _logger.Info("Malformed packet received.");
+                return;
+            }
+
             byte type = (byte)(msg.Apdu[0] >> 4);
             switch (type)
             {
@@ -73,9 +79,15 @@ namespace BACSharp
                 case 3:
                     ParseComplexAck(msg, endPoint);
                     break;
-                default:
+                case 5:
+                    ParseErrorAck(msg, endPoint);
                     break;
             }
+        }
+
+        //todo
+        private void ParseErrorAck(BacNetRawMessage msg, IPEndPoint endPoint)
+        {
         }
 
         private void ParseUncofirmed(BacNetRawMessage msg, IPEndPoint endPoint)
