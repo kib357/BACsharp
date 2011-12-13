@@ -74,7 +74,8 @@ namespace TemplateApp
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ((listBox1.SelectedIndex > 0 && listBox1.SelectedItem is uint) && (listBox2.SelectedIndex > 0 && listBox2.SelectedItem is BacNetObject))
+            textBox1.Text = string.Empty;
+            if ((listBox1.SelectedIndex >= 0 && listBox1.SelectedItem is uint) && (listBox2.SelectedIndex >= 0 && listBox2.SelectedItem is BacNetObject))
             {
                 ArrayList values;
                 values = _device.Services.Confirmed.ReadProperty(Convert.ToUInt16(listBox1.SelectedItem), listBox2.SelectedItem as BacNetObject, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE);

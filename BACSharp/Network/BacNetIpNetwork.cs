@@ -10,6 +10,7 @@ namespace BACSharp.Network
     public class BacNetIpNetwork : IBacNetNetwork
     {
         private UdpClient _udpSendClient;
+        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public BacNetIpNetwork(IPAddress adress, int udpport = 47808)
         {
@@ -27,7 +28,16 @@ namespace BACSharp.Network
         {
             _udpSendClient = new UdpClient() { EnableBroadcast = true };
             _udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            _udpSendClient.Client.Bind(new IPEndPoint(IPAddress.Parse("192.168.0.106"), UdpPort));
+            try
+            {
+                _udpSendClient.Client.Bind(new IPEndPoint(IPAddress.Parse("192.168.0.109"), UdpPort));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return;
+            }
+            
 
             if (endPoint == null)
                 _udpSendClient.Connect(Address, UdpPort);

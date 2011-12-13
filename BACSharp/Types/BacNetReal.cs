@@ -19,7 +19,12 @@ namespace BACSharp.Types
 
         public BacNetReal(byte[] apdu, int startIndex, int length, ref int len)
         {
-            Value = BitConverter.ToSingle(apdu, startIndex);
+            byte[] value = new byte[length];
+            for (int i = 0; i < length;i++ )
+            {
+                value[i] = apdu[startIndex + length - 1 - i];
+            }
+            Value = BitConverter.ToSingle(value, 0);
             len += 4;
         }
 

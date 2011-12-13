@@ -9,6 +9,10 @@ namespace BACSharp.Types
     public class BacNetRawMessage
     {
         private byte[] _all;
+        private byte[] _bvlc;
+        private byte[] _npdu;
+        private byte[] _apdu;
+
         public byte[] All 
         {
             get { return _all; }
@@ -22,61 +26,73 @@ namespace BACSharp.Types
                     {
                         _all = new byte[value.Length];
                         value.CopyTo(_all, 0);
+                        ReadBvlc(_all);
+                        ReadNpdu(_all);
+                        ReadApdu(_all);
+
+                        if (Bvlc.Length < 4 || Npdu.Length < 2 || Apdu.Length == 0)
+                            _all = null;
                     }
                     else
                         _all = null;
                 }
             }
         }
+
+#region BVLC
+
         public byte[] Bvlc
         {
-            get
-            {
-                if (All == null)
-                    return null;
-                byte[] bvlc = new byte[BvlcLength()];
-                for (int i = 0; i < bvlc.Length; i++)
-                    bvlc[i] = All[i];
-                return bvlc;
-            }
+            get { return _bvlc; }
         }
 
-        public int BvlcLength()
+        private void ReadBvlc(byte[] message)
+        {
+            _bvlc = new byte[BvlcLength(message)];
+            for (int i = 0; i < _bvlc.Length; i++)
+                _bvlc[i] = message[i];
+        }
+
+        private int BvlcLength(byte[] message)
         {
             int bvlcLength = 0;
-            if (All != null)
+            if (message != null)
             {
-                if (All[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_ORIGINAL_UNICAST_NPDU)
+                if (message[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_ORIGINAL_UNICAST_NPDU)
                     bvlcLength = 4;
-                if (All[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_ORIGINAL_BROADCAST_NPDU)
+                if (message[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_ORIGINAL_BROADCAST_NPDU)
                     bvlcLength = 4;
-                if (All[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_FORWARDED_NPDU)
+                if (message[1] == (byte)BacNetEnums.BACNET_BVLC_FUNCTION.BVLC_FORWARDED_NPDU)
                     bvlcLength = 10;
             }
             return bvlcLength;
         }
 
+#endregion BVLC
+
+#region NPDU
+
         public byte[] Npdu
         {
-            get
-            {
-                if (All == null)
-                    return null;
-                int bvlcLength = BvlcLength();
-                byte[] npdu = new byte[NpduLength()];
-                for (int i = 0; i < npdu.Length; i++)
-                    npdu[i] = All[bvlcLength + i];
-                return npdu;
-            }
+            get { return _npdu; }
         }
 
-        public int NpduLength()
+        private void ReadNpdu(byte[] message)
         {
-            int npduLength = 2, npduStart = BvlcLength();
-            if (All != null && npduStart > 3)
+            _npdu = new byte[NpduLength(message)];
+            for (int i = 0; i < _npdu.Length; i++)
+                _npdu[i] = All[_bvlc.Length + i];
+        }
+
+        private int NpduLength(byte[] message)
+        {
+            if (_bvlc.Length + 2 < message.Length)
+                return 0;
+            int npduLength = 2, npduStart = _bvlc.Length;
+            if (npduStart > 3)
             {
-                byte version = All[npduStart];
-                byte npci = All[npduStart + 1];                
+                byte version = message[npduStart];
+                byte npci = message[npduStart + 1];                
                 bool destSpecified = false, sourceSpecified = false;
                 for (int i = 0; i < 8; i++)
                 {
@@ -96,12 +112,12 @@ namespace BACSharp.Types
                 int destAddrLen = -1, sourceAddrLen = -1;
                 if (destSpecified)
                 {
-                    destAddrLen = All[npduStart + 4];
+                    destAddrLen = message[npduStart + 4];
                     npduLength = 6 + destAddrLen;
                 }
                 if (sourceSpecified)
                 {
-                    sourceAddrLen = destSpecified ? All[npduStart + 7 + destAddrLen] : All[npduStart + 4];
+                    sourceAddrLen = destSpecified ? message[npduStart + 7 + destAddrLen] : message[npduStart + 4];
                     npduLength = destSpecified ? 9 + destAddrLen + sourceAddrLen : 5 + sourceAddrLen;
                 }
                 
@@ -109,28 +125,33 @@ namespace BACSharp.Types
             return npduLength;
         }
 
+#endregion NPDU
+
+#region APDU
+
         public byte[] Apdu
         {
-            get
-            {
-                if (All == null)
-                    return null;
-                int bvlcLength = BvlcLength(), npduLength = NpduLength();
-                byte[] apdu = new byte[ApduLength()];
-                for (int i = 0; i < apdu.Length; i++)
-                    apdu[i] = All[bvlcLength + npduLength + i];
-                return apdu;
-            }
+            get { return _apdu; }
         }
 
-        public int ApduLength()
+        private void ReadApdu(byte[] message)
+        {
+            _apdu = new byte[ApduLength(message)];
+            for (int i = 0; i < _apdu.Length; i++)
+                _apdu[i] = All[_bvlc.Length + _npdu.Length + i];
+        }
+
+        private int ApduLength(byte[] message)
         {
             int apduLength = 0;
-            if (All != null)
+            if (message != null)
             {
-                apduLength = All.Length - NpduLength() - BvlcLength();
+                apduLength = message.Length - Npdu.Length - Bvlc.Length;
             }
             return apduLength;
         }
+
+#endregion APDU
+
     }
 }
