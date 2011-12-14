@@ -26,6 +26,7 @@ namespace BACSharp.Services.Confirmed
             {
                 npdu.Destination = remote.BacAddress;
                 BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+            BacNetDevice.Instance.Waiter = apdu.InvokeId;
                 return WaitForResponce(apdu.InvokeId);
             }
             return null;
@@ -50,6 +51,7 @@ namespace BACSharp.Services.Confirmed
         }
 
         public ArrayList WaitForResponce(int invokeId, int timeOut = 1000)
+        {            
         {
             BacNetDevice.Instance.Waiter = invokeId;
             int sleep = 5, time = 0;

@@ -15,6 +15,7 @@ namespace BACSharp
         #region Fields
 
         private static volatile BacNetDevice _instance;
+        internal volatile bool Listen;
         internal volatile object Waiter;
         private static readonly object SyncRoot = new Object();
                     

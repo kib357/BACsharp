@@ -15,8 +15,7 @@ namespace BACSharp
     public class BacNetListener
     {
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-        private UdpClient _udpReceiveClient;
-        private volatile bool Listen;
+        private UdpClient _udpReceiveClient;        
         private readonly int _udpPort;
         private ArrayList messagePool;
         //private object _receiveState;
@@ -24,7 +23,7 @@ namespace BACSharp
         public BacNetListener(int udpport = 47808)
         {
             _udpPort = udpport;
-            Listen = true;
+            BacNetDevice.Instance.Listen = true;
             messagePool = new ArrayList();
             Thread listener = new Thread(DoListen) {IsBackground = true};
             listener.Start();
@@ -36,12 +35,12 @@ namespace BACSharp
             IPAddress mcAddress = IPAddress.Parse("224.0.0.1");
             _udpReceiveClient.JoinMulticastGroup(mcAddress);
             IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, _udpPort);
-            while (Listen)
+            while (BacNetDevice.Instance.Listen)
             {
                 byte[] bytes = new byte[0];
                 try
                 {
-                    bytes = _udpReceiveClient.Receive(ref groupEP);   
+                    bytes = _udpReceiveClient.Receive(ref groupEP);
                 }
                 catch (Exception e)
                 {
@@ -49,6 +48,7 @@ namespace BACSharp
                 }
                 ParseBacNetMessage(bytes, groupEP);
             }
+            _udpReceiveClient.Close();
         }        
 
         private void ParseBacNetMessage(byte[] bytes, IPEndPoint endPoint)
@@ -88,6 +88,13 @@ namespace BACSharp
         //todo
         private void ParseErrorAck(BacNetRawMessage msg, IPEndPoint endPoint)
         {
+            if(msg.Apdu.Length > 2)
+                switch (msg.Apdu[2])
+                {
+                    case 12:
+                        BacNetDevice.Instance.Response.ReceivedErrorAck(msg);
+                        break;
+                }
         }
 
         private void ParseUncofirmed(BacNetRawMessage msg, IPEndPoint endPoint)
