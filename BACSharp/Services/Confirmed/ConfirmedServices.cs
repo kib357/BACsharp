@@ -18,17 +18,17 @@ namespace BACSharp.Services.Confirmed
             var apdu = new ReadProperty(bacNetObject, propertyId);
             var npdu = new BacNetIpNpdu();
             npdu.ExpectingReply = true;
-            IPEndPoint endPoint = null;
+            BacNetRemoteDevice remote = null;
             foreach (BacNetRemoteDevice remoteDevice in BacNetDevice.Instance.RemoteDevices)
-            {
                 if (remoteDevice.InstanceNumber == destinationAddress)
-                {
-                    npdu.Destination = remoteDevice.BacAddress;
-                    endPoint = remoteDevice.EndPoint;
-                }
+                    remote = remoteDevice;
+            if (remote != null)
+            {
+                npdu.Destination = remote.BacAddress;
+                BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+                return WaitForResponce(apdu.InvokeId);
             }
-            BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
-            return WaitForResponce(apdu.InvokeId);
+            return null;
         }
 
         public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)
