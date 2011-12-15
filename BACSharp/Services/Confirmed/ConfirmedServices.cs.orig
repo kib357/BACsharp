@@ -26,10 +26,15 @@ namespace BACSharp.Services.Confirmed
             {
                 npdu.Destination = remote.BacAddress;
                 BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
-            BacNetDevice.Instance.Waiter = apdu.InvokeId;
                 return WaitForResponce(apdu.InvokeId);
             }
+<<<<<<< HEAD
             return null;
+=======
+            BacNetDevice.Instance.Waiter = apdu.InvokeId;
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
+            return WaitForResponce(apdu.InvokeId);
+>>>>>>> 35dce62eeb0c2096d88281fef324429998b8d846
         }
 
         public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)
@@ -52,7 +57,6 @@ namespace BACSharp.Services.Confirmed
 
         public ArrayList WaitForResponce(int invokeId, int timeOut = 1000)
         {            
-            BacNetDevice.Instance.Waiter = invokeId;
             int sleep = 5, time = 0;
             while (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == invokeId)
             {
