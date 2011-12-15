@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Net;
-using System.Text;
 
 namespace BACSharp.Types
 {
@@ -14,6 +11,6 @@ namespace BACSharp.Types
         public BacNetUInt MaxApduLength { get; set; }
         public BacNetEnums.BACNET_SEGMENTATION Segmentation { get; set; }
         public BacNetUInt VendorId { get; set; }
-        public BacNetObject[] Objects { get; set; }        
+        public ArrayList Objects { get; set; }        
     }
 }

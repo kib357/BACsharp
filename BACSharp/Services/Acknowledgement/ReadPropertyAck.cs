@@ -10,9 +10,7 @@ namespace BACSharp.Services.Acknowledgement
 {
     public class ReadPropertyAck : IBacNetApdu
     {
-        public BacNetObject ObjectId { get; set; }
-        public BacNetUInt PropertyId { get; set; }
-        public ArrayList ValueList { get; set; }
+        public BacNetObject Obj { get; set; }
         public byte InvokeId { get; set; }
 
         public ReadPropertyAck(byte[] apdu)
@@ -23,16 +21,16 @@ namespace BACSharp.Services.Acknowledgement
             BacNetTag objectIdTag = new BacNetTag(apdu, len, ref len);
             if (objectIdTag.Class == false)
                 throw new Exception("Reject.Invalid_tag");
-            ObjectId = new BacNetObject(apdu, len, ref len);
+            Obj = new BacNetObject(apdu, len, ref len);
             //Property Id
             BacNetTag propertyIdTag = new BacNetTag(apdu, len, ref len);
             if (propertyIdTag.Number != 1)
                 throw new Exception("Reject.Invalid_tag");
-            PropertyId = new BacNetUInt(apdu, len, propertyIdTag.Length, ref len);
+            BacNetUInt PropertyId = new BacNetUInt(apdu, len, propertyIdTag.Length, ref len);
             BacNetTag openingTag = new BacNetTag(apdu, len, ref len);
+            ArrayList ValueList = new ArrayList();
             if (openingTag.Length == 6)
-            {
-                ValueList = new ArrayList();
+            {                
                 BacNetTag metaTag = new BacNetTag(apdu, len, ref len);
                 while (metaTag.Length != 7)
                 {
@@ -41,8 +39,15 @@ namespace BACSharp.Services.Acknowledgement
                     metaTag = new BacNetTag(apdu, len, ref len);
                 }
             }
+            BacNetProperty property = new BacNetProperty {PropertyId = PropertyId, Values = ValueList};
+            Obj.Properties = (BacNetProperty[])Obj.Properties.Add(property, typeof(BacNetProperty));
         }
 
+
+        /// <summary>
+        /// todo: реализовать выбор свойства для отправки
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetBytes()
         {
             ArrayList res = new ArrayList();
@@ -54,12 +59,12 @@ namespace BACSharp.Services.Acknowledgement
             //Object ID
             BacNetTag objectTag = new BacNetTag { Class = true, Length = 4, Number = 0 };
             res.AddRange(objectTag.GetBytes());
-            res.AddRange(ObjectId.GetObjectBytes());
+            res.AddRange(Obj.GetObjectBytes());
 
             //Max APDU
-            BacNetTag propertyIdTag = new BacNetTag { Class = true, Length = (byte)PropertyId.GetLength(), Number = 1 };
+            BacNetTag propertyIdTag = new BacNetTag { Class = true, Length = (byte)Obj.Properties[0].PropertyId.GetLength(), Number = 1 };
             res.AddRange(propertyIdTag.GetBytes());
-            res.AddRange(PropertyId.GetBytes());
+            res.AddRange(Obj.Properties[0].PropertyId.GetBytes());
 
             /*if (ArrayIndex != null)
             {

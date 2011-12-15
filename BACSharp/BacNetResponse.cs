@@ -124,7 +124,7 @@ namespace BACSharp
         {
             ReadPropertyAck apdu = new ReadPropertyAck(msg.Apdu);
             if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
-                BacNetDevice.Instance.Waiter = apdu.ValueList;
+                BacNetDevice.Instance.Waiter = apdu.Obj.Properties[0].Values;
         }
 
         public void ReceivedErrorAck(BacNetRawMessage msg)

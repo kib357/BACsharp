@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace BACSharp.Types
     {
         public BacNetEnums.BACNET_OBJECT_TYPE ObjectType { get; set; }
         public uint ObjectId { get; set; }
+
+        public BacNetProperty[] Properties { get; set; }
 
         public BacNetObject()
         {}

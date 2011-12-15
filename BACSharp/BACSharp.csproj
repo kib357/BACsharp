@@ -61,9 +61,11 @@
     <Compile Include="Services\Acknowledgement\AckServices.cs" />
     <Compile Include="Services\Acknowledgement\ErrorAck.cs" />
     <Compile Include="Services\Acknowledgement\ReadPropertyAck.cs" />
+    <Compile Include="Services\Acknowledgement\ReadPropertyMultipleAck.cs" />
     <Compile Include="Services\Acknowledgement\SegmentAck.cs" />
     <Compile Include="Services\Acknowledgement\SimpleAck.cs" />
     <Compile Include="Services\Confirmed\ConfirmedServices.cs" />
+    <Compile Include="Services\Confirmed\ReadPropertyMultiple.cs" />
     <Compile Include="Services\Confirmed\WriteProperty.cs" />
     <Compile Include="Services\Confirmed\ReadProperty.cs" />
     <Compile Include="Services\IBacNetService.cs" />
@@ -83,7 +85,9 @@
     <Compile Include="Types\BacNetString.cs" />
     <Compile Include="Types\BacNetTag.cs" />
     <Compile Include="Types\BacNetUInt.cs" />
+    <Compile Include="ArrayExtensions.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

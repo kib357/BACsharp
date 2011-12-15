@@ -32,6 +32,25 @@ namespace BACSharp.Services.Confirmed
             return null;
         }
 
+        public ArrayList Rpm(UInt16 destinationAddress, ArrayList objectList, ArrayList propertiesList)
+        {
+            var apdu = new ReadPropertyMultiple(objectList, propertiesList);
+            var npdu = new BacNetIpNpdu();
+            npdu.ExpectingReply = true;
+            BacNetRemoteDevice remote = null;
+            foreach (BacNetRemoteDevice remoteDevice in BacNetDevice.Instance.RemoteDevices)
+                if (remoteDevice.InstanceNumber == destinationAddress)
+                    remote = remoteDevice;
+            if (remote != null)
+            {
+                npdu.Destination = remote.BacAddress;
+                BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+                BacNetDevice.Instance.Waiter = apdu.InvokeId;
+                return WaitForResponce(apdu.InvokeId);
+            }
+            return null;
+        }
+
         public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)
         {
             var apdu = new WriteProperty(bacNetObject, propertyId, valueList);

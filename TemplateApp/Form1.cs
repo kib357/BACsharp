@@ -54,7 +54,13 @@ namespace TemplateApp
 
         private void readPropertyButton_Click(object sender, EventArgs e)
         {
-            _device.Services.Confirmed.ReadProperty(502, new BacNetObject { ObjectId = 2, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE);
+            ArrayList objectList = new ArrayList();
+            ArrayList propertyList = new ArrayList();
+            BacNetObject obj = new BacNetObject { ObjectId = 2, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE };
+            objectList.Add(obj);
+            BacNetProperty property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE }, Values = new ArrayList() };
+            propertyList.Add(property);
+            _device.Services.Confirmed.Rpm(502, objectList, propertyList);
         }
 
         private void writePropertyButton_Click(object sender, EventArgs e)
