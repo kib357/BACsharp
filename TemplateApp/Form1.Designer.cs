@@ -88,9 +88,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(525, 72);
+            this.textBox1.Location = new System.Drawing.Point(524, 72);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(226, 20);
             this.textBox1.TabIndex = 5;
             // 
             // comboBox1
@@ -104,16 +104,16 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(524, 46);
+            this.textBox2.Location = new System.Drawing.Point(525, 46);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.Size = new System.Drawing.Size(225, 20);
             this.textBox2.TabIndex = 7;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 368);
+            this.ClientSize = new System.Drawing.Size(762, 368);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox1);

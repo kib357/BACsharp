@@ -33,7 +33,7 @@ namespace BACSharp.Types
             {
                 if (_length != value)
                 {
-                    _length = value < 8 ? value : (byte)7;
+                    _length = value;
                 }
             }
         }

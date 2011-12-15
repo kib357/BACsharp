@@ -14,7 +14,12 @@ namespace BACSharp.Types
 
         public BacNetDouble(byte[] apdu, int startIndex, int length, ref int len)
         {
-            Value = BitConverter.ToDouble(apdu, startIndex);
+            byte[] value = new byte[length];
+            for (int i = 0; i < length; i++)
+            {
+                value[i] = apdu[startIndex + length - 1 - i];
+            }
+            Value = BitConverter.ToDouble(value, 0);
             len += 8;
         }
 

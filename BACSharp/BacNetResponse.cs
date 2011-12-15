@@ -58,7 +58,7 @@ namespace BACSharp
 
         public void ReceivedEventNotification(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void ReceivedPrivateTransfer(BacNetRawMessage msg)

@@ -15,6 +15,11 @@ namespace BACSharp.Types
         public BacNetString()
         {}
 
+        public override string ToString()
+        {
+            return Value;
+        }
+
         public BacNetString(byte[] apdu, int startIndex, int length, ref int len)
         {
             if (apdu[startIndex] == 0)
