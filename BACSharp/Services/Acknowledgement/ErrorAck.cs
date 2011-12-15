@@ -42,9 +42,9 @@ namespace BACSharp.Services.Acknowledgement
 
         public byte[] GetBytes()
         {
-            /*ArrayList res = new ArrayList();
+           /* ArrayList res = new ArrayList();
 
-            res.Add((byte)BacNetEnums.BACNET_PDU_TYPE.PDU_TYPE_COMPLEX_ACK);
+            res.Add((byte)BacNetEnums.BACNET_PDU_TYPE.PDU_TYPE_ERROR);
             res.Add(InvokeId);
             res.Add((byte)BacNetEnums.BACNET_CONFIRMED_SERVICE.SERVICE_CONFIRMED_READ_PROPERTY);
 

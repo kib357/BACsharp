@@ -98,6 +98,14 @@ namespace TemplateApp
                         textBox1.Text = value.ToString();
                     }
                 }
+                values = _device.Services.Confirmed.ReadProperty(Convert.ToUInt16(listBox1.SelectedItem), listBox2.SelectedItem as BacNetObject, BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME);
+                if (values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        textBox2.Text = value.ToString();
+                    }
+                }
             }
         }
 
