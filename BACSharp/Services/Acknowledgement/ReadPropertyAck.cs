@@ -40,7 +40,7 @@ namespace BACSharp.Services.Acknowledgement
                 }
             }
             BacNetProperty property = new BacNetProperty {PropertyId = PropertyId, Values = ValueList};
-            Obj.Properties = (BacNetProperty[])Obj.Properties.Add(property, typeof(BacNetProperty));
+            Obj.Properties.Add(property);
         }
 
 

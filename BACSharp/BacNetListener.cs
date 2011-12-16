@@ -182,6 +182,9 @@ namespace BACSharp
                     case 12:
                         BacNetDevice.Instance.Response.ReceivedReadPropertyAck(msg);
                         break;
+                    case 14:
+                        BacNetDevice.Instance.Response.ReceivedReadPropertyMultipleAck(msg);
+                        break;
                 }
             }
         }

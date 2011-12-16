@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Net;
 using BACSharp.NPDU;
 using BACSharp.Services.Acknowledgement;
@@ -19,31 +20,26 @@ namespace BACSharp
 
         public void ReceivedIAm(BacNetRawMessage msg, IPEndPoint endPoint)
         {
-            BacNetRemoteDevice device = new BacNetRemoteDevice();
-            device.EndPoint = endPoint;
+            BacNetRemoteDevice newDevice = new BacNetRemoteDevice();
+            newDevice.EndPoint = endPoint;
             BacNetIpNpdu npdu = new BacNetIpNpdu(msg.Npdu);
             IAm apdu = new IAm(msg.Apdu);
             if (npdu.Source != null)
-                device.BacAddress = npdu.Source;
-            device.MaxApduLength = apdu.MaxApduLength;
-            device.InstanceNumber = apdu.deviceObject.ObjectId;            
-            device.Segmentation = apdu.SegmentationSupported;
-            device.VendorId = apdu.VendorId;
+                newDevice.BacAddress = npdu.Source;
+            newDevice.MaxApduLength = apdu.MaxApduLength;
+            newDevice.InstanceNumber = apdu.deviceObject.ObjectId;            
+            newDevice.Segmentation = apdu.SegmentationSupported;
+            newDevice.VendorId = apdu.VendorId;
 
-            if (device.InstanceNumber == BacNetDevice.Instance.DeviceId)
+            if (newDevice.InstanceNumber == BacNetDevice.Instance.DeviceId)
                 return;
 
-            for (int i = 0; i < BacNetDevice.Instance.RemoteDevices.Count;i++ )
-            {
-                BacNetRemoteDevice remoteDevice = BacNetDevice.Instance.RemoteDevices[i] as BacNetRemoteDevice;
-                if (remoteDevice == null) continue;
-                if (remoteDevice.InstanceNumber == device.InstanceNumber)
-                {
-                    BacNetDevice.Instance.RemoteDevices[i] = device;
-                    return;
-                }
-            }
-            BacNetDevice.Instance.RemoteDevices.Add(device);
+            BacNetRemoteDevice rem =
+                BacNetDevice.Instance.Remote.FirstOrDefault(s => s.InstanceNumber == newDevice.InstanceNumber);
+            if (rem != null)
+                BacNetDevice.Instance.Remote.Remove(rem);
+
+            BacNetDevice.Instance.Remote.Add(newDevice);
         }
 
         public void ReceivedIHave(BacNetRawMessage msg)
@@ -125,6 +121,13 @@ namespace BACSharp
             ReadPropertyAck apdu = new ReadPropertyAck(msg.Apdu);
             if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
                 BacNetDevice.Instance.Waiter = apdu.Obj.Properties[0].Values;
+        }
+
+        public void ReceivedReadPropertyMultipleAck(BacNetRawMessage msg)
+        {
+            ReadPropertyMultipleAck apdu = new ReadPropertyMultipleAck(msg.Apdu);
+            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+                BacNetDevice.Instance.Waiter = apdu.ObjectList;
         }
 
         public void ReceivedErrorAck(BacNetRawMessage msg)

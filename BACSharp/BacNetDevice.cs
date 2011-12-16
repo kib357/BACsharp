@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using BACSharp.Network;
 using BACSharp.Types;
 
@@ -40,13 +41,13 @@ namespace BACSharp
         public BacNetServices Services;
         public BacNetListener Listener;
         public BacNetResponse Response;
-        public ArrayList RemoteDevices { get; internal set; } 
+        public List<BacNetRemoteDevice> Remote { get; internal set; } 
 
         #endregion
 
         private BacNetDevice()
         {
-            RemoteDevices = new ArrayList();
+            Remote = new List<BacNetRemoteDevice>();
             Services = new BacNetServices();
             Response = new BacNetResponse();
         }
@@ -66,6 +67,19 @@ namespace BACSharp
 
                 return _instance;
             }
+        }
+
+        internal BacNetRemoteDevice SearchRemote(BacNetRemoteDevice device)
+        {
+            BacNetRemoteDevice rem =
+               Instance.Remote.FirstOrDefault(s => s.InstanceNumber == device.InstanceNumber);
+            if (rem == null)
+            {
+                Instance.Services.Unconfirmed.WhoIs((ushort)device.InstanceNumber, (ushort)device.InstanceNumber, 500);
+                Thread.Sleep(500);
+                rem = Instance.Remote.FirstOrDefault(s => s.InstanceNumber == device.InstanceNumber);
+            }
+            return rem;
         }
     }
 }

@@ -26,6 +26,7 @@ namespace TemplateApp
             InitializeComponent();
             _device = BacNetDevice.Instance;
             _device.DeviceId = 357;
+            ArrayList adresses = new ArrayList();
             foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
                 if (f.OperationalStatus == OperationalStatus.Up)
                 {
@@ -35,16 +36,18 @@ namespace TemplateApp
                         if (s.IPv4Mask != null && s.IPv4Mask.ToString() != "0.0.0.0")
                         {
                             comboBox1.Items.Add(s.Address + " " + s.IPv4Mask);
+                            adresses.Add(s.Address + " " + s.IPv4Mask);
                         }
                     }
                 }
+            comboBox1.SelectedItem = adresses[0];
         }
 
         private void whoIsButton_Click(object sender, EventArgs e)
         {
             _device.Services.Unconfirmed.WhoIs(0,1000);
             Thread.Sleep(1000);
-            foreach (var remoteDevice in _device.RemoteDevices)
+            foreach (var remoteDevice in _device.Remote)
             {
                 BacNetRemoteDevice rm = remoteDevice as BacNetRemoteDevice;
                 if (rm == null) continue;
@@ -54,13 +57,18 @@ namespace TemplateApp
 
         private void readPropertyButton_Click(object sender, EventArgs e)
         {
-            ArrayList objectList = new ArrayList();
+            /*ArrayList objectList = new ArrayList();
             ArrayList propertyList = new ArrayList();
             BacNetObject obj = new BacNetObject { ObjectId = 2, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE };
             objectList.Add(obj);
             BacNetProperty property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE }, Values = new ArrayList() };
             propertyList.Add(property);
-            _device.Services.Confirmed.Rpm(502, objectList, propertyList);
+            _device.Services.Confirmed.Rpm(502, objectList, propertyList);*/
+
+            var obj = new BacNetObject { ObjectId = 112, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT };
+            var objList = new List<BacNetObject> {obj};
+            objList[0].Properties.Add(new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE } });
+            _device.Services.Confirmed.Rpm(100, objList);
         }
 
         private void writePropertyButton_Click(object sender, EventArgs e)
@@ -75,12 +83,11 @@ namespace TemplateApp
             listBox2.Items.Clear();
             if (listBox1.SelectedIndex > 0 && listBox1.SelectedItem is uint)
             {
-                ArrayList values;
                 ushort instance = Convert.ToUInt16(listBox1.SelectedItem);
-                values = _device.Services.Confirmed.ReadProperty(instance, new BacNetObject { ObjectId = instance, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST);
-                if (values != null)
+                BacNetProperty property = _device.Services.Confirmed.ReadProperty(instance + ".DEV" + instance, BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST);
+                if (property != null)
                 {
-                    foreach (var value in values)
+                    foreach (var value in property.Values)
                     {
                         BacNetObject obj = value as BacNetObject;
                         if (obj == null) continue;
@@ -95,19 +102,19 @@ namespace TemplateApp
             textBox1.Text = string.Empty;
             if ((listBox1.SelectedIndex >= 0 && listBox1.SelectedItem is uint) && (listBox2.SelectedIndex >= 0 && listBox2.SelectedItem is BacNetObject))
             {
-                ArrayList values;
-                values = _device.Services.Confirmed.ReadProperty(Convert.ToUInt16(listBox1.SelectedItem), listBox2.SelectedItem as BacNetObject, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE);
-                if (values != null)
+                BacNetProperty property;
+                property = _device.Services.Confirmed.ReadProperty(listBox1.SelectedItem + "." + (listBox2.SelectedItem as BacNetObject).GetStringId());
+                if (property != null)
                 {
-                    foreach (var value in values)
+                    foreach (var value in property.Values)
                     {
                         textBox1.Text = value.ToString();
                     }
                 }
-                values = _device.Services.Confirmed.ReadProperty(Convert.ToUInt16(listBox1.SelectedItem), listBox2.SelectedItem as BacNetObject, BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME);
-                if (values != null)
+                property = _device.Services.Confirmed.ReadProperty(listBox1.SelectedItem + "." + (listBox2.SelectedItem as BacNetObject).GetStringId(), BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME);
+                if (property != null)
                 {
-                    foreach (var value in values)
+                    foreach (var value in property.Values)
                     {
                         textBox2.Text = value.ToString();
                     }

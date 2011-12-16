@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using BACSharp.Types;
 
 namespace BACSharp.Network
 {
@@ -29,7 +30,7 @@ namespace BACSharp.Network
 
             if (BacNetDevice.Instance.Listener != null)
             {
-                BacNetDevice.Instance.RemoteDevices = new ArrayList();
+                BacNetDevice.Instance.Remote.Clear();
                 BacNetDevice.Instance.Listen = false;
                 Send(new byte[1], new IPEndPoint(Broadcast, UdpPort));
                 Thread.Sleep(100);
