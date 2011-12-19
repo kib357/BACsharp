@@ -52,7 +52,23 @@ namespace BACSharp.Types
 
         public override string ToString()
         {
-            return ObjectType.ToString() + "." + ObjectId.ToString();
+            string res = string.Empty;
+            foreach (var bacNetProperty in Properties)
+            {
+                if (bacNetProperty.PropertyId.Value == (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME)
+                    foreach (var value in bacNetProperty.Values)
+                    {
+                        res += value.ToString() + " ";
+                    }
+                if (bacNetProperty.PropertyId.Value == (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE)
+                    foreach (var value in bacNetProperty.Values)
+                    {
+                        res += value.ToString() + " ";
+                    }
+            }
+            if (res == string.Empty)
+                return ObjectType.ToString() + "." + ObjectId.ToString();
+            return res;
         }
 
         public byte[] GetObjectBytes()

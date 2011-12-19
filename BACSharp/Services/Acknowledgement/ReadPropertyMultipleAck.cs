@@ -63,8 +63,8 @@ namespace BACSharp.Services.Acknowledgement
             var openingTag = new BacNetTag(apdu, len, ref len);
             if (openingTag.Length == 6 && openingTag.Number == 1)
             {
-                BacNetTag metaTag = new BacNetTag(apdu, len, ref len);                
-                while (metaTag.Length != 7 && metaTag.Number != 1)
+                BacNetTag metaTag = new BacNetTag(apdu, len, ref len);
+                while ((metaTag.Length != 7 || metaTag.LongTag) && metaTag.Number != 1)
                 {
                     var propertyId = new BacNetUInt(apdu, len, metaTag.Length, ref len);
                     BacNetProperty prop = new BacNetProperty { PropertyId = propertyId};
@@ -83,7 +83,7 @@ namespace BACSharp.Services.Acknowledgement
             if (openingTag.Length == 6 && openingTag.Number == 4)
             {
                 BacNetTag metaTag = new BacNetTag(apdu, len, ref len);
-                while (metaTag.Length != 7)
+                while (metaTag.Length != 7 || metaTag.LongTag)
                 {
                     object value = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len);
                     valueList.Add(value);

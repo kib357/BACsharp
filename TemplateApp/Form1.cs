@@ -64,10 +64,24 @@ namespace TemplateApp
             BacNetProperty property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE }, Values = new ArrayList() };
             propertyList.Add(property);
             _device.Services.Confirmed.Rpm(502, objectList, propertyList);*/
-
+            var property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE } };
             var obj = new BacNetObject { ObjectId = 112, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT };
             var objList = new List<BacNetObject> {obj};
-            objList[0].Properties.Add(new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE } });
+            objList[0].Properties.Add(property);
+            objList.Add(new BacNetObject { ObjectId = 212, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 1212, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 1, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 999, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 1000, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 104, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 108, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 109, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 111, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 204, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 208, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 101, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 103, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });
+            objList.Add(new BacNetObject { ObjectId = 104, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });
             _device.Services.Confirmed.Rpm(100, objList);
         }
 
@@ -94,7 +108,21 @@ namespace TemplateApp
                         listBox2.Items.Add(obj);
                     }
                 }
-            }
+                var objList = new List<BacNetObject>();
+                var nameProperty = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME } };
+                var valueProperty = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE } };
+                for (int i = 0; i < listBox2.Items.Count && i < 30;i++)
+                {
+                    objList.Add(listBox2.Items[i] as BacNetObject);
+                    objList[objList.Count - 1].Properties = new List<BacNetProperty> {nameProperty, valueProperty};
+                }
+                List<BacNetObject> objectsWithValues = _device.Services.Confirmed.Rpm(instance, objList);
+                listBox3.Items.Clear();
+                foreach (var objectsWithValue in objectsWithValues)
+                {
+                    listBox3.Items.Add(objectsWithValue);
+                }
+            }            
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)

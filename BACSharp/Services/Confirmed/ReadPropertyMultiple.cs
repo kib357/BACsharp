@@ -93,14 +93,12 @@ namespace BACSharp.Services.Confirmed
                 res.AddRange(obj.GetObjectBytes());
                 BacNetTag openingTag = new BacNetTag{Class = true, Length = 6, Number = 1};
                 res.AddRange(openingTag.GetBytes());
-                byte propNumber = 0;
                 foreach (BacNetProperty property in obj.Properties)
                 {
                     //Property ID
-                    BacNetTag propertyIdTag = new BacNetTag { Class = true, Length = (byte)property.PropertyId.GetLength(), Number = propNumber };
+                    BacNetTag propertyIdTag = new BacNetTag { Class = true, Length = (byte)property.PropertyId.GetLength(), Number = 0 };
                     res.AddRange(propertyIdTag.GetBytes());
                     res.AddRange(property.PropertyId.GetBytes());
-                    propNumber++;
                 }
                 BacNetTag closingTag = new BacNetTag { Class = true, Length = 7, Number = 1 };
                 res.AddRange(closingTag.GetBytes());
