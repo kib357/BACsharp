@@ -90,6 +90,16 @@ namespace BACSharp.Services.Acknowledgement
                     metaTag = new BacNetTag(apdu, len, ref len);
                 }
             }
+            if (openingTag.Length == 6 && openingTag.Number == 5)
+            {
+                BacNetTag metaTag = new BacNetTag(apdu, len, ref len);
+                while (metaTag.Length != 7 || metaTag.LongTag)
+                {
+                    object value = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len);
+                    //valueList.Add(value);
+                    metaTag = new BacNetTag(apdu, len, ref len);
+                }
+            }
             return valueList;
         }
 
