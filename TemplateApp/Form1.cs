@@ -45,7 +45,7 @@ namespace TemplateApp
 
         private void whoIsButton_Click(object sender, EventArgs e)
         {
-            _device.Services.Unconfirmed.WhoIs(0,1000);
+            _device.Services.Unconfirmed.WhoIs(17810,17843);
             Thread.Sleep(1000);
             foreach (var remoteDevice in _device.Remote)
             {
@@ -88,8 +88,8 @@ namespace TemplateApp
         private void writePropertyButton_Click(object sender, EventArgs e)
         {
             ArrayList values = new ArrayList();
-            values.Add(new BacNetReal {Value = (float)22.5});
-            _device.Services.Confirmed.WriteProperty(1769, new BacNetObject { ObjectId = 200, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+            values.Add(new BacNetReal {Value = (float)10});
+            _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = 276, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
