@@ -13,6 +13,8 @@ namespace BACSharp.Services.Confirmed
 {
     public class ConfirmedServices : IBacNetServiceList
     {
+        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         public ArrayList ReadProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId)
         {
             var apdu = new ReadProperty(bacNetObject, propertyId);
@@ -36,12 +38,34 @@ namespace BACSharp.Services.Confirmed
         {
             string[] addrArray = address.Split('.');
             if (addrArray.Length != 2)
-                throw new Exception("Wrong address");
+            {
+                _logger.Warn("Wrong address: " + address);
+                return null;
+            }
 
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(addrArray[0]));
             if (remote == null)
-                throw new Exception("No such device in network");
-            BacNetObject tmpObj = BacNetObject.Get(addrArray[1]);
+            {
+                _logger.Warn("No such device in network. Device number: " + addrArray[0]);
+                return null;
+            }
+
+            BacNetObject tmpObj;
+            try
+            {
+                tmpObj = BacNetObject.Get(addrArray[1]);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex.Message);
+                return new BacNetProperty
+                                         {
+                                             PropertyId = new BacNetUInt{ Value = (uint)propId},
+                                             Values = new ArrayList {new BacNetString("Error")}
+                                         };
+                //return null;
+            }
+
             BacNetObject obj = remote.Objects.FirstOrDefault(s => s.ObjectId == tmpObj.ObjectId && s.ObjectType == tmpObj.ObjectType);
             if (obj == null)
             {
@@ -70,16 +94,10 @@ namespace BACSharp.Services.Confirmed
         {
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
             if (remote == null)
-                throw new Exception("No such device in network");
-
-            /*foreach (var tmpObj in objectList)
             {
-                BacNetObject obj = remote.Objects.FirstOrDefault(s => s.ObjectId == tmpObj.ObjectId && s.ObjectType == tmpObj.ObjectType);
-                if (obj == null)
-                {
-                    remote.Objects.Add(tmpObj);
-                }
-            }*/
+                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
+                return null;
+            }          
 
             var apdu = new ReadPropertyMultiple(objectList);
             var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };

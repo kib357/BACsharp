@@ -15,6 +15,11 @@ namespace BACSharp.Types
         public BacNetString()
         {}
 
+        public BacNetString(string value)
+        {
+            Value = value;
+        }
+
         public override string ToString()
         {
             return Value;

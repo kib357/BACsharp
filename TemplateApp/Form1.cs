@@ -45,7 +45,7 @@ namespace TemplateApp
 
         private void whoIsButton_Click(object sender, EventArgs e)
         {
-            _device.Services.Unconfirmed.WhoIs(17810,17843);
+            _device.Services.Unconfirmed.WhoIs();
             Thread.Sleep(1000);
             foreach (var remoteDevice in _device.Remote)
             {
@@ -118,9 +118,10 @@ namespace TemplateApp
                 }
                 List<BacNetObject> objectsWithValues = _device.Services.Confirmed.Rpm(instance, objList);
                 listBox3.Items.Clear();
-                foreach (var objectsWithValue in objectsWithValues)
+                foreach (var objectWithValues in objectsWithValues)
                 {
-                    listBox3.Items.Add(objectsWithValue);
+                    if (objectWithValues != null)
+                        listBox3.Items.Add(objectWithValues);
                 }
             }            
         }
