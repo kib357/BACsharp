@@ -44,38 +44,38 @@ namespace BACSharp
 
         public void ReceivedIHave(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedCovNotification(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedEventNotification(BacNetRawMessage msg)
         {
-            //throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedPrivateTransfer(BacNetRawMessage msg)
         {
-            //throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedTextMessage(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedTimeSynchronization(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
 
         public void ReceivedWhoHas(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
         public void ReceivedWhoIs(BacNetRawMessage msg)
@@ -88,7 +88,7 @@ namespace BACSharp
 
         public void ReceivedUtcTimeSynchronization(BacNetRawMessage msg)
         {
-            throw new NotImplementedException();
+            //todo: implement method
         }
 
 
