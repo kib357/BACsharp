@@ -32,7 +32,7 @@ namespace BACSharp
         private void DoListen()
         {
             _udpReceiveClient = new UdpClient(_udpPort, AddressFamily.InterNetwork);
-            IPAddress mcAddress = IPAddress.Parse("224.0.0.1");
+            IPAddress mcAddress = IPAddress.Parse("224.0.0.0");
             _udpReceiveClient.JoinMulticastGroup(mcAddress);
             IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, _udpPort);
             while (BacNetDevice.Instance.Listen)
