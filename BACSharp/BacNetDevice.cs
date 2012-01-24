@@ -69,6 +69,17 @@ namespace BACSharp
             }
         }
 
+        public static void Reset()
+        {
+            if (_instance != null)
+            {
+                lock (SyncRoot)
+                {
+                    _instance = null;
+                }
+            }
+        }
+
         internal BacNetRemoteDevice SearchRemote(BacNetRemoteDevice device)
         {
             BacNetRemoteDevice rem =
