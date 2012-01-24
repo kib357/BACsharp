@@ -130,11 +130,21 @@ namespace BACSharp.Services.Confirmed
         {            
             BacNetDevice.Instance.Waiter = invokeId;
             int sleep = 5, time = 0;
-            while (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == invokeId)
+            while (BacNetDevice.Instance.Waiter is int)
             {
-                Thread.Sleep(sleep);
-                time += sleep;
-                if (time >= timeOut) break;
+                try
+                {
+                    if (invokeId == Convert.ToInt32(BacNetDevice.Instance.Waiter))
+                    {
+                        Thread.Sleep(sleep);
+                        time += sleep;
+                        if (time >= timeOut) break;
+                    }
+                }
+                catch
+                {
+                    break;
+                }                
             }
             return BacNetDevice.Instance.Waiter;           
         }
