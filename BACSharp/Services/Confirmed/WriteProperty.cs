@@ -101,6 +101,11 @@ namespace BACSharp.Services.Confirmed
             BacNetTag closingTag = new BacNetTag { Class = true, Length = 7, Number = 3 };
             res.AddRange(closingTag.GetBytes());
 
+            BacNetTag priorityTag = new BacNetTag {Class = true, Number = 4, Length = 1};
+            res.AddRange(priorityTag.GetBytes());
+            res.Add((byte)0x02);
+            
+
             return (byte[])res.ToArray(typeof(byte));
         }
     }
