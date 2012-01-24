@@ -117,7 +117,7 @@ namespace TemplateApp
                     _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col1[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
                 }
             }
-            foreach (var i in col1)
+            /*foreach (var i in col1)
             {
                 _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)i, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
             }
@@ -156,7 +156,7 @@ namespace TemplateApp
                         k += 18;
                     }
 
-                }
+                }*/
             /*while (k < 20)
             {
                 foreach (var i in objects)
@@ -279,6 +279,34 @@ namespace TemplateApp
         private Task _sg3;
 
         private volatile bool go;
+
+        private void StartGroup()
+        {
+            ArrayList values = new ArrayList();
+            values.Add(new BacNetReal { Value = 1 });
+
+            List<int> col = new List<int> { 267, 276 };
+
+            while (true)
+            {
+                if (!go) return;
+
+                values[0] = new BacNetReal { Value = 100 };
+                for (int i = 0; i < 2; i++)
+                {
+                    Thread.Sleep(500);
+                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                }
+                values[0] = new BacNetReal { Value = 1 };
+                Thread.Sleep(500);
+                for (int i = 1; i >= 0; i--)
+                {
+                    Thread.Sleep(500);
+                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                }
+                Thread.Sleep(500);
+            }
+        }
 
         private void StartGroup1()
         {
