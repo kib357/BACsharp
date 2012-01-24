@@ -123,7 +123,7 @@ namespace BACSharp.Services.Confirmed
                 }
             }
             BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
-            WaitForResponce(apdu.InvokeId);
+            //WaitForResponce(apdu.InvokeId);
         }
 
         public object WaitForResponce(int invokeId, int timeOut = 1000)

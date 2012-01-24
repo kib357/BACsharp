@@ -37,6 +37,10 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.listBox3 = new System.Windows.Forms.ListBox();
+            this.buttonLightOn = new System.Windows.Forms.Button();
+            this.buttonLightOff = new System.Windows.Forms.Button();
+            this.buttonLightStart = new System.Windows.Forms.Button();
+            this.buttonLightStop = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -115,14 +119,57 @@
             this.listBox3.FormattingEnabled = true;
             this.listBox3.Location = new System.Drawing.Point(525, 98);
             this.listBox3.Name = "listBox3";
-            this.listBox3.Size = new System.Drawing.Size(302, 225);
+            this.listBox3.Size = new System.Drawing.Size(268, 225);
             this.listBox3.TabIndex = 8;
+            // 
+            // buttonLightOn
+            // 
+            this.buttonLightOn.Location = new System.Drawing.Point(816, 13);
+            this.buttonLightOn.Name = "buttonLightOn";
+            this.buttonLightOn.Size = new System.Drawing.Size(88, 23);
+            this.buttonLightOn.TabIndex = 9;
+            this.buttonLightOn.Text = "On";
+            this.buttonLightOn.UseVisualStyleBackColor = true;
+            this.buttonLightOn.Click += new System.EventHandler(this.buttonLightOn_Click);
+            // 
+            // buttonLightOff
+            // 
+            this.buttonLightOff.Location = new System.Drawing.Point(816, 42);
+            this.buttonLightOff.Name = "buttonLightOff";
+            this.buttonLightOff.Size = new System.Drawing.Size(88, 23);
+            this.buttonLightOff.TabIndex = 10;
+            this.buttonLightOff.Text = "Off";
+            this.buttonLightOff.UseVisualStyleBackColor = true;
+            this.buttonLightOff.Click += new System.EventHandler(this.buttonLightOff_Click);
+            // 
+            // buttonLightStart
+            // 
+            this.buttonLightStart.Location = new System.Drawing.Point(816, 69);
+            this.buttonLightStart.Name = "buttonLightStart";
+            this.buttonLightStart.Size = new System.Drawing.Size(88, 23);
+            this.buttonLightStart.TabIndex = 11;
+            this.buttonLightStart.Text = "Start";
+            this.buttonLightStart.UseVisualStyleBackColor = true;
+            this.buttonLightStart.Click += new System.EventHandler(this.buttonLightStart_Click);
+            // 
+            // buttonLightStop
+            // 
+            this.buttonLightStop.Location = new System.Drawing.Point(816, 98);
+            this.buttonLightStop.Name = "buttonLightStop";
+            this.buttonLightStop.Size = new System.Drawing.Size(88, 23);
+            this.buttonLightStop.TabIndex = 12;
+            this.buttonLightStop.Text = "Stop";
+            this.buttonLightStop.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 368);
+            this.Controls.Add(this.buttonLightStop);
+            this.Controls.Add(this.buttonLightStart);
+            this.Controls.Add(this.buttonLightOff);
+            this.Controls.Add(this.buttonLightOn);
             this.Controls.Add(this.listBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.comboBox1);
@@ -150,6 +197,10 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.ListBox listBox3;
+        private System.Windows.Forms.Button buttonLightOn;
+        private System.Windows.Forms.Button buttonLightOff;
+        private System.Windows.Forms.Button buttonLightStart;
+        private System.Windows.Forms.Button buttonLightStop;
     }
 }
 
