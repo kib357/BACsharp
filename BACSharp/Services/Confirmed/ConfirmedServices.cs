@@ -81,10 +81,10 @@ namespace BACSharp.Services.Confirmed
 
             BacNetProperty property = obj.Properties.FirstOrDefault(s => s.PropertyId.Value == (uint) propId);
             if (property != null)
-                property.Values = valueList;
+                property.Values = valueList ?? new ArrayList();
             else
             {
-                property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)propId }, Values = valueList };
+                property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)propId }, Values = valueList ?? new ArrayList() };
                 obj.Properties.Add(property);
             }                                      
             return property;
@@ -96,7 +96,7 @@ namespace BACSharp.Services.Confirmed
             if (remote == null)
             {
                 _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
-                return null;
+                return new List<BacNetObject>();
             }          
 
             var apdu = new ReadPropertyMultiple(objectList);
@@ -105,7 +105,7 @@ namespace BACSharp.Services.Confirmed
             BacNetDevice.Instance.Waiter = apdu.InvokeId;
             BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);            
             objectList = WaitForResponce(apdu.InvokeId) as List<BacNetObject>;
-            return objectList;
+            return objectList ?? new List<BacNetObject>();
         }
 
         public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)

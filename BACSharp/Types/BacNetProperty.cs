@@ -8,6 +8,12 @@ namespace BACSharp.Types
 {
     public class BacNetProperty
     {
+        public BacNetProperty()
+        {
+            Values = new ArrayList();
+            PropertyId = new BacNetUInt();
+        }
+
         public BacNetUInt PropertyId { get; set; }
         public ArrayList Values { get; set; }
     }

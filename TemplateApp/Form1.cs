@@ -95,7 +95,7 @@ namespace TemplateApp
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             listBox2.Items.Clear();
-            if (listBox1.SelectedIndex > 0 && listBox1.SelectedItem is uint)
+            if (listBox1.SelectedIndex >= 0 && listBox1.SelectedItem is uint)
             {
                 ushort instance = Convert.ToUInt16(listBox1.SelectedItem);
                 BacNetProperty property = _device.Services.Confirmed.ReadProperty(instance + ".DEV" + instance, BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST);
