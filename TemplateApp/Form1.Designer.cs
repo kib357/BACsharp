@@ -160,6 +160,7 @@
             this.buttonLightStop.TabIndex = 12;
             this.buttonLightStop.Text = "Stop";
             this.buttonLightStop.UseVisualStyleBackColor = true;
+            this.buttonLightStop.Click += new System.EventHandler(this.buttonLightStop_Click);
             // 
             // Form1
             // 
