@@ -58,12 +58,12 @@ namespace BACSharp.Types
                 if (bacNetProperty.PropertyId.Value == (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_NAME)
                     foreach (var value in bacNetProperty.Values)
                     {
-                        res += value.ToString() + " ";
+                        res += value ?? "" + " ";
                     }
                 if (bacNetProperty.PropertyId.Value == (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE)
                     foreach (var value in bacNetProperty.Values)
                     {
-                        res += value.ToString() + " ";
+                        res += value ?? "" + " ";
                     }
             }
             if (res == string.Empty)

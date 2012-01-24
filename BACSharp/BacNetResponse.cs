@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using BACSharp.NPDU;
@@ -24,6 +25,7 @@ namespace BACSharp
         {
             BacNetRemoteDevice newDevice = new BacNetRemoteDevice();
             newDevice.EndPoint = endPoint;
+
             BacNetIpNpdu npdu;
             IAm apdu;
             try
@@ -33,7 +35,7 @@ namespace BACSharp
             }
             catch (Exception ex)
             {
-                _logger.WarnException("Received wrong i-am", ex);
+                _logger.WarnException("Received malformed I-am", ex);
                 return;
             }
             
@@ -131,16 +133,40 @@ namespace BACSharp
 
         public void ReceivedReadPropertyAck(BacNetRawMessage msg)
         {
-            ReadPropertyAck apdu = new ReadPropertyAck(msg.Apdu);
+            ReadPropertyAck apdu;
+            try
+            {
+                apdu = new ReadPropertyAck(msg.Apdu);
+            }
+            catch(Exception ex)
+            {
+                _logger.WarnException("Malformed ReadPropertyAck: ", ex);
+                BacNetDevice.Instance.Waiter = new ArrayList();
+                return;
+            }
             if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
                 BacNetDevice.Instance.Waiter = apdu.Obj.Properties[0].Values;
         }
 
         public void ReceivedReadPropertyMultipleAck(BacNetRawMessage msg)
         {
-            ReadPropertyMultipleAck apdu = new ReadPropertyMultipleAck(msg.Apdu);
+            ReadPropertyMultipleAck apdu;
+            try
+            {
+                apdu = new ReadPropertyMultipleAck(msg.Apdu);
+            }
+            catch (Exception ex)
+            {
+                _logger.WarnException("Malformed ReadPropertyMultipleAck: ", ex);
+                BacNetDevice.Instance.Waiter = new List<BacNetObject>();
+                return;
+            }
             if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+            {
+                if (apdu.ObjectList == null)
+                    _logger.Warn("Received empty object list");
                 BacNetDevice.Instance.Waiter = apdu.ObjectList;
+            }
         }
 
         public void ReceivedErrorAck(BacNetRawMessage msg)
