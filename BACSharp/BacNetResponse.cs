@@ -12,6 +12,8 @@ namespace BACSharp
 {
     public class BacNetResponse
     {
+        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         public BacNetResponse()
         {    
         }
@@ -22,8 +24,19 @@ namespace BACSharp
         {
             BacNetRemoteDevice newDevice = new BacNetRemoteDevice();
             newDevice.EndPoint = endPoint;
-            BacNetIpNpdu npdu = new BacNetIpNpdu(msg.Npdu);
-            IAm apdu = new IAm(msg.Apdu);
+            BacNetIpNpdu npdu;
+            IAm apdu;
+            try
+            {
+                npdu = new BacNetIpNpdu(msg.Npdu);
+                apdu = new IAm(msg.Apdu);
+            }
+            catch (Exception ex)
+            {
+                _logger.WarnException("Received wrong i-am", ex);
+                return;
+            }
+            
             if (npdu.Source != null)
                 newDevice.BacAddress = npdu.Source;
             newDevice.MaxApduLength = apdu.MaxApduLength;
