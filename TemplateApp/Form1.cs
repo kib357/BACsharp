@@ -88,7 +88,7 @@ namespace TemplateApp
         private void writePropertyButton_Click(object sender, EventArgs e)
         {
             ArrayList values = new ArrayList();
-            values.Add(new BacNetReal {Value = (float)100});
+            values.Add(new BacNetReal {Value = (float)70});
             _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = 276, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
         }
 
