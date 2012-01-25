@@ -27,6 +27,7 @@ namespace TemplateApp
             InitializeComponent();
             _device = BacNetDevice.Instance;
             _device.DeviceId = 357;
+            
             ArrayList adresses = new ArrayList();
             foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
                 if (f.OperationalStatus == OperationalStatus.Up)
@@ -237,7 +238,7 @@ namespace TemplateApp
 
         private void buttonLightOn_Click(object sender, EventArgs e)
         {
-            List<int> objects = new List<int> { 276, 265, 268, 267, 258, 271 };
+            /*List<int> objects = new List<int> { 276, 265, 268, 267, 258, 271 };
 
             ArrayList values = new ArrayList();
             values.Add(new BacNetReal { Value = (float)100 });
@@ -245,34 +246,219 @@ namespace TemplateApp
             foreach (var i in objects)
             {
                 _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)i, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+            }*/
+            List<string> objects = new List<string> { "17811.65551", "17811.65807",
+                                                      "17812.68111", "17812.68367", "17812.68623",
+                                                      "17821.1015", "17821.1115", "17821.1215",
+                                                      "17822.65551", "17822.65807",
+                                                      "17831.68111", "17831.86367", "17831.68623", "17831.277",
+                                                      "17832.68111", "17832.68367",
+                                                      "17841.68111", "17841.68367",
+                                                      "17842.68111", "17842.68367", "17842.68623"};
+
+            ArrayList values = new ArrayList();
+            values.Add(new BacNetReal { Value = 100 });
+            //Выключаем лампы
+            foreach (var i in objects)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                }
             }
         }
 
         private void buttonLightOff_Click(object sender, EventArgs e)
         {
-            List<int> objects = new List<int> { 276, 265, 268, 267, 258, 271 };
+            List<string> objects = new List<string> { "17811.65551", "17811.65807",
+                                                      "17812.68111", "17812.68367", "17812.68623",
+                                                      "17821.1015", "17821.1115", "17821.1215",
+                                                      "17822.65551", "17822.65807",
+                                                      "17831.68111", "17831.86367", "17831.68623", "17831.277",
+                                                      "17832.68111", "17832.68367",
+                                                      "17841.68111", "17841.68367",
+                                                      "17842.68111", "17842.68367", "17842.68623"};
 
             ArrayList values = new ArrayList();
-            values.Add(new BacNetReal { Value = (float)1 });
+            values.Add(new BacNetReal { Value = 0 });
             //Выключаем лампы
             foreach (var i in objects)
             {
-                _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)i, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                }
             }
         }
 
         private void buttonLightStart_Click(object sender, EventArgs e)
         {
-            go = true;
-            _sg1 = new Task(StartGroup1);
-            _sg2 = new Task(StartGroup2);
-            _sg3 = new Task(StartGroup3);
-            _sg1.Start();
-            Thread.Sleep(1000);
-            _sg2.Start();
-            Thread.Sleep(1000);
-            _sg3.Start();
+            /*List<string> objects = new List<string> { "17811.65550", "17811.265806",
+                                                      "17812.68110", "17812.68366", "17812.68622",
+                                                      "17821.1014", "17821.1114", "17821.1214",
+                                                      "17822.65550", "17822.65806",
+                                                      "17831.68110", "17831.86366", "17831.68622", "17831.276",
+                                                      "17832.68110", "17832.68366",
+                                                      "17841.68110", "17841.68366",
+                                                      "17842.68110", "17842.68366", "17842.68622"};
+
+            ArrayList values = new ArrayList();
+            values.Add(new BacNetReal { Value = 0 });
+            //Выключаем лампы
+            foreach (var i in objects)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+                }
+            }*/
+
+
+            lpList = new List<LampGroup>();
+            //FASAD
+            List<string> addresses = new List<string> {"17811.257", "17821.119", "17831.533", "17841.273"};
+            LampGroup lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.271", "17821.123", "17831.530", "17841.281" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.268", "17821.118", "17831.536", "17841.282" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.269", "17822.34", "17832.27", "17842.520" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.270", "17822.37", "17832.33", "17842.527" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.276", "17822.267", "17832.275", "17842.267" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.277", "17822.257", "17832.276", "17842.265" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.271", "17822.256", "17832.277", "17842.271" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.316", "17822.260", "17832.273", "17842.273" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.548", "17822.271", "17832.270", "17842.262" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.532", "17822.274", "17832.266", "17842.263" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.540", "17822.276", "17832.268", "17842.270" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            //PRAVO
+            addresses = new List<string> { "17812.535", "17822.272", "17832.264", "17842.266" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.534", "17822.9", "17832.17", "17842.519" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.512", "17822.21", "17832.7", "17842.531" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.524", "17822.23", "17832.13", "17842.534" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.19", "17822.19", "17832.32", "17842.535" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.16", "17822.20", "17832.12", "17842.533" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.15", "17822.205", "17831.6", "17841.2" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.24", "17822.25", "17832.16", "17842.544" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            //BACK
+            addresses = new List<string> { "17812.18", "17822.29", "17832.20", "17842.540" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.5", "17822.28", "17832.15", "17842.542" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.29", "17822.32", "17832.29", "17842.553" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17812.2", "17821.222", "17831.21", "17842.545" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.60", "17821.221", "17831.20", "17842.541" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.12", "17821.217", "17831.13", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.8", "17821.209", "17831.25", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.10", "17821.216", "17831.23", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.7", "17821.227", "17831.26", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.60", "17821.234", "17831.28", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.1", "17821.238", "17831.36", "17841.24" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.3", "17821.244", "17831.32", "17841.21" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.5", "17821.242", "17831.39", "17841.23" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            //LEVO
+            addresses = new List<string> { "17811.2", "17821.231", "17831.38", "17841.19" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.269", "17821.202", "17831.7", "17841.0" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.319", "17821.103", "17831.524", "17841.258" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.319", "17821.107", "17831.518", "17841.264" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.319", "17821.110", "17831.516", "17841.262" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.262", "17821.124", "17831.528", "17841.268" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.260", "17822.40", "17832.0", "17842.60" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            addresses = new List<string> { "17811.261", "17821.115", "17831.537", "17841.284" };
+            lp = new LampGroup(addresses, _device);
+            lpList.Add(lp);
+            foreach (var lampGroup in lpList)
+            {
+                lampGroup.Start();
+                Thread.Sleep(1000);
+            }
         }
+
+        private List<LampGroup> lpList;
 
         private Task _sg1;
         private Task _sg2;
@@ -280,122 +466,14 @@ namespace TemplateApp
 
         private volatile bool go;
 
-        private void StartGroup()
-        {
-            ArrayList values = new ArrayList();
-            values.Add(new BacNetReal { Value = 1 });
-
-            List<int> col = new List<int> { 267, 276 };
-
-            while (true)
-            {
-                if (!go) return;
-
-                values[0] = new BacNetReal { Value = 100 };
-                for (int i = 0; i < 2; i++)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                values[0] = new BacNetReal { Value = 1 };
-                Thread.Sleep(500);
-                for (int i = 1; i >= 0; i--)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                Thread.Sleep(500);
-            }
-        }
-
-        private void StartGroup1()
-        {
-            ArrayList values = new ArrayList();
-            values.Add(new BacNetReal { Value = 1 });
-
-            List<int> col = new List<int> { 267, 276 };
-
-            while (true)
-            {
-                if (!go) return;
-                
-                values[0] = new BacNetReal { Value = 100 };
-                for (int i = 0; i < 2; i++)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                values[0] = new BacNetReal { Value = 1 };
-                Thread.Sleep(500);
-                for (int i = 1; i >= 0; i--)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                Thread.Sleep(500);
-            }
-        }
-
-        private void StartGroup2()
-        {
-            ArrayList values = new ArrayList();
-            values.Add(new BacNetReal { Value = 1 });
-
-            List<int> col = new List<int> { 258, 265 };
-
-            while (true)
-            {
-                if (!go) return;
-                
-                values[0] = new BacNetReal { Value = 100 };
-                for (int i = 0; i < 2; i++)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                values[0] = new BacNetReal { Value = 1 };
-                Thread.Sleep(500);
-                for (int i = 1; i >= 0; i--)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                Thread.Sleep(500);
-            }
-        }
-
-        private void StartGroup3()
-        {
-            ArrayList values = new ArrayList();
-            values.Add(new BacNetReal { Value = 1 });
-
-            List<int> col = new List<int> { 271, 268 };
-
-            while (true)
-            {
-                if (!go) return;
-
-                values[0] = new BacNetReal { Value = 100 };
-                for (int i = 0; i < 2; i++)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                values[0] = new BacNetReal { Value = 1 };
-                Thread.Sleep(500);
-                for (int i = 1; i >= 0; i--)
-                {
-                    Thread.Sleep(500);
-                    _device.Services.Confirmed.WriteProperty(17811, new BacNetObject { ObjectId = (uint)col[i], ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
-                }
-                Thread.Sleep(500);
-            }
-        }
-
+        private Task _sg;
 
         private void buttonLightStop_Click(object sender, EventArgs e)
         {
-            go = false;
+            foreach (var lampGroup in lpList)
+            {
+                lampGroup.Stop();
+            }
         }
     }
 }
