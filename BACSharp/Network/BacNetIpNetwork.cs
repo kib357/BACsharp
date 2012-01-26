@@ -14,6 +14,7 @@ namespace BACSharp.Network
     {
         private UdpClient _udpSendClient;
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly object SyncRoot = new Object();
 
         public BacNetIpNetwork(IPAddress adress, IPAddress mask,  int udpport = 47808)
         {
@@ -35,7 +36,8 @@ namespace BACSharp.Network
                 Send(new byte[1], new IPEndPoint(Broadcast, UdpPort));
                 Thread.Sleep(100);
             }
-            BacNetDevice.Instance.Listener = new BacNetListener(udpport);
+
+            BacNetDevice.Instance.Listener = new BacNetListener();
         }
 
         public IPAddress Address { get; set; }
@@ -45,26 +47,36 @@ namespace BACSharp.Network
 
         public void Send(byte[] message, IPEndPoint endPoint = null)
         {
-            _udpSendClient = new UdpClient() { EnableBroadcast = true };
-            _udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            try
+            lock (SyncRoot)
             {
-                _udpSendClient.Client.Bind(new IPEndPoint(Address, UdpPort));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return;
-            }
-            
+                UdpClient udpSendClient = new UdpClient() {EnableBroadcast = true};
+                udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                try
+                {
+                    udpSendClient.Client.Bind(new IPEndPoint(Address, UdpPort));
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Bind error", ex);
+                    return;
+                }
 
-            if (endPoint == null)
-                _udpSendClient.Connect(Broadcast, UdpPort);
-            else 
-                _udpSendClient.Connect(endPoint.Address, endPoint.Port);
 
-            _udpSendClient.Send(message, message.Length);
-            _udpSendClient.Close();
+                if (endPoint == null)
+                    udpSendClient.Connect(Broadcast, UdpPort);
+                else
+                    udpSendClient.Connect(endPoint.Address, endPoint.Port);
+
+
+                udpSendClient.Send(message, message.Length);
+
+                udpSendClient.Close();
+            }
+        }
+
+        private void Completed(IAsyncResult ar)
+        {
+            //throw new NotImplementedException();
         }
     }
 }
