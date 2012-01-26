@@ -41,6 +41,7 @@
             this.buttonLightOff = new System.Windows.Forms.Button();
             this.buttonLightStart = new System.Windows.Forms.Button();
             this.buttonLightStop = new System.Windows.Forms.Button();
+            this.buttonVertLight = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -162,11 +163,22 @@
             this.buttonLightStop.UseVisualStyleBackColor = true;
             this.buttonLightStop.Click += new System.EventHandler(this.buttonLightStop_Click);
             // 
+            // buttonVertLight
+            // 
+            this.buttonVertLight.Location = new System.Drawing.Point(816, 167);
+            this.buttonVertLight.Name = "buttonVertLight";
+            this.buttonVertLight.Size = new System.Drawing.Size(88, 23);
+            this.buttonVertLight.TabIndex = 13;
+            this.buttonVertLight.Text = "Start 1";
+            this.buttonVertLight.UseVisualStyleBackColor = true;
+            this.buttonVertLight.Click += new System.EventHandler(this.buttonVertLight_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 368);
+            this.Controls.Add(this.buttonVertLight);
             this.Controls.Add(this.buttonLightStop);
             this.Controls.Add(this.buttonLightStart);
             this.Controls.Add(this.buttonLightOff);
@@ -202,6 +214,7 @@
         private System.Windows.Forms.Button buttonLightOff;
         private System.Windows.Forms.Button buttonLightStart;
         private System.Windows.Forms.Button buttonLightStop;
+        private System.Windows.Forms.Button buttonVertLight;
     }
 }
 

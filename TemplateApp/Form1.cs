@@ -299,7 +299,7 @@ namespace TemplateApp
 
         private void buttonLightStart_Click(object sender, EventArgs e)
         {
-            /*List<string> objects = new List<string> { "17811.65550", "17811.265806",
+            List<string> objects = new List<string> { "17811.65550", "17811.65806",
                                                       "17812.68110", "17812.68366", "17812.68622",
                                                       "17821.1014", "17821.1114", "17821.1214",
                                                       "17822.65550", "17822.65806",
@@ -320,11 +320,12 @@ namespace TemplateApp
                     uint num = Convert.ToUInt32(tmpAddr[1]);
                     _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
                 }
-            }*/
+            }
 
-
+            
             lpList = new List<LampGroup>();
             //FASAD
+            
             List<string> addresses = new List<string> {"17811.257", "17821.119", "17831.533", "17841.273"};
             LampGroup lp = new LampGroup(addresses, _device);
             lpList.Add(lp);
@@ -451,6 +452,7 @@ namespace TemplateApp
             addresses = new List<string> { "17811.261", "17821.115", "17831.537", "17841.284" };
             lp = new LampGroup(addresses, _device);
             lpList.Add(lp);
+             
             foreach (var lampGroup in lpList)
             {
                 lampGroup.Start();
@@ -473,6 +475,157 @@ namespace TemplateApp
             foreach (var lampGroup in lpList)
             {
                 lampGroup.Stop();
+            }
+        }
+
+        private void buttonVertLight_Click(object sender, EventArgs e)
+        {
+            Thread s1 = new Thread(f1S) { IsBackground = true };
+            Thread s2 = new Thread(f2S) { IsBackground = true };
+            Thread s3 = new Thread(f3S) { IsBackground = true };
+            Thread s4 = new Thread(f4S) { IsBackground = true };
+            while (true)
+            {
+                s1 = new Thread(f1S) { IsBackground = true };
+                s1.Start();
+                Thread.Sleep(1000);
+                s2 = new Thread(f2S) { IsBackground = true };
+                s2.Start();
+                Thread.Sleep(1000);
+                s3 = new Thread(f3S) { IsBackground = true };
+                s3.Start();
+                Thread.Sleep(1000);
+                s4 = new Thread(f4S) { IsBackground = true };
+                s4.Start();
+                Thread.Sleep(1000);
+            }
+            
+        }
+
+        private void f1S()
+        {
+            List<string> floor1 = new List<string> {  "17811.65551", "17811.65807",
+                                                      "17812.68111", "17812.68367", "17812.68623"};
+            ArrayList offValues = new ArrayList();
+            offValues.Add(new BacNetReal { Value = 1 });
+            ArrayList onValues = new ArrayList();
+            onValues.Add(new BacNetReal { Value = 100 });
+
+            foreach (var i in floor1)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, onValues);
+                }
+            }
+            Thread.Sleep(1000);
+            foreach (var i in floor1)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, offValues);
+                }
+            }
+        }
+
+        private void f2S()
+        {
+            List<string> floor2 = new List<string> {  "17821.1015", "17821.1115", "17821.1215",
+                                                      "17822.65551", "17822.65807"};
+            ArrayList offValues = new ArrayList();
+            offValues.Add(new BacNetReal { Value = 1 });
+            ArrayList onValues = new ArrayList();
+            onValues.Add(new BacNetReal { Value = 100 });
+            foreach (var i in floor2)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, onValues);
+                }
+            }
+            Thread.Sleep(1000);
+            foreach (var i in floor2)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, offValues);
+                }
+            }
+        }
+
+        private void f3S()
+        {
+            List<string> floor3 = new List<string> {  "17831.68111", "17831.86367", "17831.68623", "17831.277",
+                                                      "17832.68111", "17832.68367"};
+            ArrayList offValues = new ArrayList();
+            offValues.Add(new BacNetReal { Value = 1 });
+            ArrayList onValues = new ArrayList();
+            onValues.Add(new BacNetReal { Value = 100 });
+
+            foreach (var i in floor3)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, onValues);
+                }
+            }
+            Thread.Sleep(1000);
+            foreach (var i in floor3)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, offValues);
+                }
+            }
+        }
+
+        private void f4S()
+        {
+            List<string> floor4 = new List<string> {  "17841.68111", "17841.68367",
+                                                      "17842.68111", "17842.68367", "17842.68623"};
+            ArrayList offValues = new ArrayList();
+            offValues.Add(new BacNetReal { Value = 1 });
+            ArrayList onValues = new ArrayList();
+            onValues.Add(new BacNetReal { Value = 100 });
+
+            foreach (var i in floor4)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, onValues);
+                }
+            }
+            Thread.Sleep(1000);
+            foreach (var i in floor4)
+            {
+                string[] tmpAddr = i.Split('.');
+                if (tmpAddr.Length == 2)
+                {
+                    ushort dev = Convert.ToUInt16(tmpAddr[0]);
+                    uint num = Convert.ToUInt32(tmpAddr[1]);
+                    _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, offValues);
+                }
             }
         }
     }

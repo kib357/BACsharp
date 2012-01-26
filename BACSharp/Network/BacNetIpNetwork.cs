@@ -14,6 +14,7 @@ namespace BACSharp.Network
     {
         private UdpClient _udpSendClient;
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly object SyncRoot = new Object();
 
         public BacNetIpNetwork(IPAddress adress, IPAddress mask,  int udpport = 47808)
         {
@@ -46,28 +47,31 @@ namespace BACSharp.Network
 
         public void Send(byte[] message, IPEndPoint endPoint = null)
         {
-            UdpClient udpSendClient = new UdpClient() { EnableBroadcast = true };
-            udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            try
+            lock (SyncRoot)
             {
-                udpSendClient.Client.Bind(new IPEndPoint(Address, UdpPort));
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("Bind error", ex);
-                return;
-            }
+                UdpClient udpSendClient = new UdpClient() {EnableBroadcast = true};
+                udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                try
+                {
+                    udpSendClient.Client.Bind(new IPEndPoint(Address, UdpPort));
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException("Bind error", ex);
+                    return;
+                }
 
 
-            if (endPoint == null)
-                udpSendClient.Connect(Broadcast, UdpPort);
-            else
-                udpSendClient.Connect(endPoint.Address, endPoint.Port);
+                if (endPoint == null)
+                    udpSendClient.Connect(Broadcast, UdpPort);
+                else
+                    udpSendClient.Connect(endPoint.Address, endPoint.Port);
 
 
                 udpSendClient.Send(message, message.Length);
 
-            udpSendClient.Close();
+                udpSendClient.Close();
+            }
         }
 
         private void Completed(IAsyncResult ar)

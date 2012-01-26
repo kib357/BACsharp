@@ -47,7 +47,7 @@ namespace TemplateApp
                 values[0] = new BacNetReal { Value = 100 };
                 for (int i = 0; i < _addresses.Count; i++)
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                     string[] tmpAddr = _addresses[i].Split('.');
                     if (tmpAddr.Length == 2)
                     {
@@ -57,10 +57,10 @@ namespace TemplateApp
                     }
                 }
                 values[0] = new BacNetReal { Value = 1 };
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
                 for (int i = (_addresses.Count - 1); i >= 0; i--)
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                     string[] tmpAddr = _addresses[i].Split('.');
                     if (tmpAddr.Length == 2)
                     {
@@ -69,7 +69,7 @@ namespace TemplateApp
                         _device.Services.Confirmed.WriteProperty(dev, new BacNetObject { ObjectId = num, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
                     }
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
     }
