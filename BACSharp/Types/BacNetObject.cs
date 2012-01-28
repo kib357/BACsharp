@@ -36,7 +36,8 @@ namespace BACSharp.Types
                 if (i < 22)
                 {
                     if (((apdu[startIndex + 3 - i / 8] >> (i % 8)) & 1) == 1)
-                        ObjectId = (ushort)(ObjectId | (1 << i));
+                        //ObjectId = (ushort)(ObjectId | (1 << i));
+                        ObjectId = (uint)(ObjectId | (1 << i));
                 }
                 else
                 {
