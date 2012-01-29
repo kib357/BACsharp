@@ -169,8 +169,7 @@ namespace BACSharp
             }
 
             //RpmE
-            if (BacNetDevice.Instance.WaitList.ContainsKey(apdu.InvokeId))
-                BacNetDevice.Instance.WaitList[apdu.InvokeId] = apdu.ObjectList;
+            BacNetDevice.Instance.Services.Confirmed.RpmCallBack(apdu.InvokeId, apdu.ObjectList);
         }
 
         public void ReceivedErrorAck(BacNetRawMessage msg)

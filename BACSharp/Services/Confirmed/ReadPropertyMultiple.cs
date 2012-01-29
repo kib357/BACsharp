@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using BACSharp.APDU;
 using BACSharp.Types;
+using BACSharp.Services.Confirmed;
 
 namespace BACSharp.Services.Confirmed
 {
@@ -12,9 +13,13 @@ namespace BACSharp.Services.Confirmed
     {
         public List<BacNetObject> ObjectList { get; set; }
         public int InvokeId { get; set; }
+        public uint InstanceId { get; set; }
+        public ConfirmedServices.RpmEDelegate CallBack { get; set; }
+        public DateTime Created { get; private set; }
 
         public ReadPropertyMultiple(byte[] apdu)
         {
+            Created = DateTime.Now;
             InvokeId = apdu[2];
             int len = 4;
             if (apdu.Length < 7)
@@ -33,6 +38,7 @@ namespace BACSharp.Services.Confirmed
 
         public ReadPropertyMultiple(List<BacNetObject> objectList)
         {
+            Created = DateTime.Now;
             ObjectList = objectList;
             InvokeId = BacNetDevice.Instance.InvokeId;
         }

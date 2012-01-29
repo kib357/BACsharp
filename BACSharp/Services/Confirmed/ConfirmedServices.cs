@@ -14,6 +14,12 @@ namespace BACSharp.Services.Confirmed
     public class ConfirmedServices : IBacNetServiceList
     {
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private Dictionary<int, ReadPropertyMultiple> _rpmPool;
+
+        public ConfirmedServices()
+        {
+            _rpmPool = new Dictionary<int, ReadPropertyMultiple>();
+        }
 
         public ArrayList ReadProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId)
         {
@@ -115,42 +121,24 @@ namespace BACSharp.Services.Confirmed
             if (remote == null)
             {
                 _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
+                return;
             }
 
             var apdu = new ReadPropertyMultiple(objectList);
+            apdu.CallBack = callBack;
+            apdu.InstanceId = instanceId;
             var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };
 
-            lock (BacNetDevice.Instance.WaitList)
-            {
-                if (!BacNetDevice.Instance.WaitList.ContainsKey(apdu.InvokeId))
-                    BacNetDevice.Instance.WaitList.Add(apdu.InvokeId, null);
-            }
-
-            Thread water = new Thread(unused => WaitRPM(apdu.InvokeId, instanceId, callBack));
-            water.Start();
-
+            _rpmPool.Add(apdu.InvokeId, apdu);
             BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
         }
 
-        public void WaitRPM(int invokeId, uint instanceId, RpmEDelegate callBack)
+        public void RpmCallBack(int invokeID, List<BacNetObject> objects)
         {
-            int sleep = 20, time = 0, timeOut = 1000;
-            while (true)
+            lock (_rpmPool)
             {
-                lock (BacNetDevice.Instance.WaitList)
-                {
-                    if (BacNetDevice.Instance.WaitList.ContainsKey(invokeId) &&
-                        BacNetDevice.Instance.WaitList[invokeId] != null)
-                    {
-                        callBack(instanceId, BacNetDevice.Instance.WaitList[invokeId] as List<BacNetObject>);
-                        BacNetDevice.Instance.WaitList.Remove(invokeId);
-                        return;
-                    }
-                }
-
-                Thread.Sleep(sleep);
-                time += sleep;
-                if (time >= timeOut) return;
+                if (_rpmPool.ContainsKey(invokeID))
+                    _rpmPool[invokeID].CallBack(_rpmPool[invokeID].InstanceId, objects);
             }
         }
 
@@ -194,7 +182,6 @@ namespace BACSharp.Services.Confirmed
             }
             return BacNetDevice.Instance.Waiter;           
         }
-
-        
+      
     }
 }
