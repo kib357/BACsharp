@@ -18,6 +18,7 @@ namespace BACSharp
         private static volatile BacNetDevice _instance;
         internal volatile bool Listen;
         internal volatile object Waiter;
+        internal volatile Dictionary<int, object> WaitList; 
         private static readonly object SyncRoot = new Object();
                     
         #endregion
@@ -50,6 +51,7 @@ namespace BACSharp
             Remote = new List<BacNetRemoteDevice>();
             Services = new BacNetServices();
             Response = new BacNetResponse();
+            WaitList = new Dictionary<int, object>();
         }
 
         public static BacNetDevice Instance

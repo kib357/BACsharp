@@ -167,6 +167,10 @@ namespace BACSharp
                     _logger.Warn("Received empty object list");
                 BacNetDevice.Instance.Waiter = apdu.ObjectList;
             }
+
+            //RpmE
+            if (BacNetDevice.Instance.WaitList.ContainsKey(apdu.InvokeId))
+                BacNetDevice.Instance.WaitList[apdu.InvokeId] = apdu.ObjectList;
         }
 
         public void ReceivedErrorAck(BacNetRawMessage msg)

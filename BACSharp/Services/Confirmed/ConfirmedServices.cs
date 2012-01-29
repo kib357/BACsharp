@@ -108,6 +108,52 @@ namespace BACSharp.Services.Confirmed
             return objectList ?? new List<BacNetObject>();
         }
 
+        public delegate void RpmEDelegate(uint deviceId, List<BacNetObject> objects);
+        public void RpmE(uint instanceId, List<BacNetObject> objectList, RpmEDelegate callBack)
+        {
+            BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
+            if (remote == null)
+            {
+                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
+            }
+
+            var apdu = new ReadPropertyMultiple(objectList);
+            var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };
+
+            lock (BacNetDevice.Instance.WaitList)
+            {
+                if (!BacNetDevice.Instance.WaitList.ContainsKey(apdu.InvokeId))
+                    BacNetDevice.Instance.WaitList.Add(apdu.InvokeId, null);
+            }
+
+            Thread water = new Thread(unused => WaitRPM(apdu.InvokeId, instanceId, callBack));
+            water.Start();
+
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+        }
+
+        public void WaitRPM(int invokeId, uint instanceId, RpmEDelegate callBack)
+        {
+            int sleep = 20, time = 0, timeOut = 1000;
+            while (true)
+            {
+                lock (BacNetDevice.Instance.WaitList)
+                {
+                    if (BacNetDevice.Instance.WaitList.ContainsKey(invokeId) &&
+                        BacNetDevice.Instance.WaitList[invokeId] != null)
+                    {
+                        callBack(instanceId, BacNetDevice.Instance.WaitList[invokeId] as List<BacNetObject>);
+                        BacNetDevice.Instance.WaitList.Remove(invokeId);
+                        return;
+                    }
+                }
+
+                Thread.Sleep(sleep);
+                time += sleep;
+                if (time >= timeOut) return;
+            }
+        }
+
         public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)
         {
             var apdu = new WriteProperty(bacNetObject, propertyId, valueList);
@@ -148,5 +194,7 @@ namespace BACSharp.Services.Confirmed
             }
             return BacNetDevice.Instance.Waiter;           
         }
+
+        
     }
 }
