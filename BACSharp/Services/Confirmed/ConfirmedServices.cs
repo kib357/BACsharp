@@ -129,7 +129,16 @@ namespace BACSharp.Services.Confirmed
             apdu.InstanceId = instanceId;
             var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };
 
-            _rpmPool.Add(apdu.InvokeId, apdu);
+            lock (_rpmPool)
+            {
+                if (_rpmPool.ContainsKey(apdu.InvokeId))
+                {
+                    _rpmPool[apdu.InvokeId].CallBack(_rpmPool[apdu.InvokeId].InstanceId, null);
+                    _rpmPool.Remove(apdu.InvokeId);
+                }
+                _rpmPool.Add(apdu.InvokeId, apdu);
+            }
+            
             BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
         }
 
@@ -138,7 +147,10 @@ namespace BACSharp.Services.Confirmed
             lock (_rpmPool)
             {
                 if (_rpmPool.ContainsKey(invokeID))
+                {
                     _rpmPool[invokeID].CallBack(_rpmPool[invokeID].InstanceId, objects);
+                    _rpmPool.Remove(invokeID);
+                }
             }
         }
 
