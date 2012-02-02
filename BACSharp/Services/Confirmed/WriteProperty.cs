@@ -103,7 +103,7 @@ namespace BACSharp.Services.Confirmed
 
             BacNetTag priorityTag = new BacNetTag {Class = true, Number = 4, Length = 1};
             res.AddRange(priorityTag.GetBytes());
-            res.Add((byte)0x02);
+            res.Add((byte)0xA);
             
 
             return (byte[])res.ToArray(typeof(byte));
