@@ -40,10 +40,10 @@ namespace BACSharp.Network
             BacNetDevice.Instance.Listener = new BacNetListener();
         }
 
-        public IPAddress Address { get; set; }
-        public IPAddress Broadcast { get; set; }
+        private IPAddress Address { get; set; }
+        private IPAddress Broadcast { get; set; }
 
-        public int UdpPort { get; set; }
+        private int UdpPort { get; set; }
 
         public void Send(byte[] message, IPEndPoint endPoint = null)
         {

@@ -66,10 +66,12 @@ namespace TemplateApp
             BacNetProperty property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE }, Values = new ArrayList() };
             propertyList.Add(property);
             _device.Services.Confirmed.Rpm(502, objectList, propertyList);*/
-            var property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE } };
-            var obj = new BacNetObject { ObjectId = 65796, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT };
+            var property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST } };
+            var obj = new BacNetObject { ObjectId = 500, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE };
             var objList = new List<BacNetObject> {obj};
-            objList[0].Properties.Add(property);
+            _device.Services.Confirmed.ReadProperty("500.DEV500", BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST);
+            _device.Services.Confirmed.ReadProperty("500.DEV500", BacNetEnums.BACNET_PROPERTY_ID.PROP_OBJECT_LIST);
+            //objList[0].Properties.Add(property);
             /*objList.Add(new BacNetObject { ObjectId = 212, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT, Properties = new List<BacNetProperty> { property } });
             objList.Add(new BacNetObject { ObjectId = 1212, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT, Properties = new List<BacNetProperty> { property } });
             objList.Add(new BacNetObject { ObjectId = 1, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE, Properties = new List<BacNetProperty> { property } });
@@ -84,7 +86,7 @@ namespace TemplateApp
             objList.Add(new BacNetObject { ObjectId = 101, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });
             objList.Add(new BacNetObject { ObjectId = 103, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });
             objList.Add(new BacNetObject { ObjectId = 104, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT, Properties = new List<BacNetProperty> { property } });*/
-            _device.Services.Confirmed.RpmE(17811, objList, RpmECallBack);
+            //_device.Services.Confirmed.RpmE(17811, objList, RpmECallBack);
         }
 
         private void RpmECallBack(uint deviceId, List<BacNetObject> objects)

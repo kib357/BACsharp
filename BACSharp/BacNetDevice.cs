@@ -40,8 +40,8 @@ namespace BACSharp
 
         public IBacNetNetwork Network;
         public BacNetServices Services;
-        public BacNetListener Listener;
-        public BacNetResponse Response;
+        internal BacNetListener Listener;
+        internal BacNetResponse Response;
         public List<BacNetRemoteDevice> Remote { get; internal set; } 
 
         #endregion
