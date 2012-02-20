@@ -15,9 +15,9 @@ namespace BACSharp
 {
     public class BacNetServices
     {
-        public ConfirmedServices Confirmed;
-        public UnconfirmedServices Unconfirmed;
-        public AckServices Acknowledgement;
+        public ConfirmedServices Confirmed { get; private set; }
+        public UnconfirmedServices Unconfirmed { get; private set; }
+        public AckServices Acknowledgement { get; private set; }
 
         public BacNetServices()
         {
