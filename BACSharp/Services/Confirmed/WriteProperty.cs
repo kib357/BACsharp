@@ -97,7 +97,7 @@ namespace BACSharp.Services.Confirmed
                 res.AddRange(valueBytes);
             }
 
-            //Opening Tag
+            //Closing Tag
             BacNetTag closingTag = new BacNetTag { Class = true, Length = 7, Number = 3 };
             res.AddRange(closingTag.GetBytes());
 
