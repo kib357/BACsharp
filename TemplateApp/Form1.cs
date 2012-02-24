@@ -94,7 +94,6 @@ namespace TemplateApp
             throw new NotImplementedException();
         }
 
-
         private void writePropertyButton_Click(object sender, EventArgs e)
         {
             ArrayList values = new ArrayList {new BacNetEnumeration {Value = 1}};
@@ -503,16 +502,16 @@ namespace TemplateApp
             {
                 s1 = new Thread(f1S) { IsBackground = true };
                 s1.Start();
-                Thread.Sleep(1000);
+                Thread.Sleep(1250);
                 s2 = new Thread(f2S) { IsBackground = true };
                 s2.Start();
-                Thread.Sleep(1000);
+                Thread.Sleep(1250);
                 s3 = new Thread(f3S) { IsBackground = true };
                 s3.Start();
-                Thread.Sleep(1000);
+                Thread.Sleep(1250);
                 s4 = new Thread(f4S) { IsBackground = true };
                 s4.Start();
-                Thread.Sleep(1000);
+                Thread.Sleep(1250);
             }
             
         }
