@@ -87,7 +87,6 @@ namespace BACSharp
             //todo: implement method
         }
 
-
         public void ReceivedWhoHas(BacNetRawMessage msg)
         {
             //todo: implement method
@@ -105,7 +104,6 @@ namespace BACSharp
         {
             //todo: implement method
         }
-
 
         #endregion
 
@@ -175,10 +173,29 @@ namespace BACSharp
         public void ReceivedErrorAck(BacNetRawMessage msg)
         {
             ErrorAck apdu = new ErrorAck(msg.Apdu);
-            ArrayList res = new ArrayList();
-            res.Add(apdu.ErrorCode);
-            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
-                BacNetDevice.Instance.Waiter = res;
+            if (apdu.ServiceChoise == 12)
+            {
+                ArrayList res = new ArrayList();
+                res.Add(apdu.ErrorCode);
+                if (BacNetDevice.Instance.Waiter is int &&
+                    Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+                    BacNetDevice.Instance.Waiter = res;
+            }
+            if (apdu.ServiceChoise == 15)
+            {
+                BacNetDevice.Instance.Services.Confirmed.WritePropertyCallBack(apdu.InvokeId, BacNetEnums.GetErrorMessage((byte)apdu.ErrorCode));
+            }
+        }
+
+        public void ReceivedSimpleAck(BacNetRawMessage msg)
+        {
+            var npdu = new BacNetIpNpdu(msg.Npdu);
+            var apdu = new SimpleAck(msg.Apdu);
+            //WritePropertyOk
+            if (apdu.ServiceChoise == 15)
+            {
+                BacNetDevice.Instance.Services.Confirmed.WritePropertyCallBack(apdu.InvokeId, "Ok");
+            }
         }
 
         #endregion

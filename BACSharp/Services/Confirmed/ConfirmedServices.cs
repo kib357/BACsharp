@@ -15,10 +15,12 @@ namespace BACSharp.Services.Confirmed
     {
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private Dictionary<int, ReadPropertyMultiple> _rpmPool;
+        private Dictionary<int, WriteProperty> _writePropertyPool;
 
         public ConfirmedServices()
         {
             _rpmPool = new Dictionary<int, ReadPropertyMultiple>();
+            _writePropertyPool = new Dictionary<int, WriteProperty>();
         }
 
         public ArrayList ReadProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId)
@@ -154,22 +156,47 @@ namespace BACSharp.Services.Confirmed
             }
         }
 
-        public void WriteProperty(UInt16 destinationAddress, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList)
+        public delegate void WritePropertyDelegate(uint deviceId, BacNetObject objectId, string status);
+        public void WriteProperty(uint instanceId, BacNetObject bacNetObject, BacNetEnums.BACNET_PROPERTY_ID propertyId, ArrayList valueList, WritePropertyDelegate callBack = null)
         {
             var apdu = new WriteProperty(bacNetObject, propertyId, valueList);
+            apdu.InstanceId = instanceId;
+            apdu.CallBack = callBack;         
             var npdu = new BacNetIpNpdu();
             npdu.ExpectingReply = true;
             IPEndPoint endPoint = null;
             foreach (BacNetRemoteDevice remoteDevice in BacNetDevice.Instance.Remote)
             {
-                if (remoteDevice.InstanceNumber == destinationAddress)
+                if (remoteDevice.InstanceNumber == instanceId)
                 {
                     npdu.Destination = remoteDevice.BacAddress;
                     endPoint = remoteDevice.EndPoint;
                 }
             }
+
+            lock (_writePropertyPool)
+            {
+                if (_writePropertyPool.ContainsKey(apdu.InvokeId))
+                {
+                    _writePropertyPool[apdu.InvokeId].CallBack(_writePropertyPool[apdu.InvokeId].InstanceId, null, null);
+                    _writePropertyPool.Remove(apdu.InvokeId);
+                }
+                _writePropertyPool.Add(apdu.InvokeId, apdu);
+            }
+
             BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
-            //WaitForResponce(apdu.InvokeId);
+        }
+
+        public void WritePropertyCallBack(int invokeID, string status)
+        {
+            lock (_writePropertyPool)
+            {
+                if (_writePropertyPool.ContainsKey(invokeID))
+                {
+                    _writePropertyPool[invokeID].CallBack(_writePropertyPool[invokeID].InstanceId, _writePropertyPool[invokeID].ObjectId, status);
+                    _writePropertyPool.Remove(invokeID);
+                }
+            }
         }
 
         public object WaitForResponce(int invokeId, int timeOut = 1000)

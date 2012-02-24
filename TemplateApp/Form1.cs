@@ -98,7 +98,7 @@ namespace TemplateApp
         private void writePropertyButton_Click(object sender, EventArgs e)
         {
             ArrayList values = new ArrayList {new BacNetEnumeration {Value = 1}};
-            _device.Services.Confirmed.WriteProperty(501, new BacNetObject { ObjectId = (uint)1, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values);
+            _device.Services.Confirmed.WriteProperty(501, new BacNetObject { ObjectId = (uint)1999, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE, values, OnPropertyWritten);
             /*List<int> objects = new List<int> { 276, 265, 268, 267, 258, 271 };
 
             List<int> col1 = new List<int> { 276, 265, 268 };
@@ -178,6 +178,11 @@ namespace TemplateApp
                 }
                 k++;
             }*/
+        }
+
+        private void OnPropertyWritten(uint deviceid, BacNetObject objectid, string status)
+        {
+            MessageBox.Show(deviceid + " " + objectid.ObjectId + " " + status);
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

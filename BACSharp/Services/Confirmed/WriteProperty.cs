@@ -15,6 +15,8 @@ namespace BACSharp.Services.Confirmed
         public BacNetUInt ArrayIndex { get; set; }
         public ArrayList ValueList { get; set; }
         public int InvokeId { get; set; }
+        public uint InstanceId { get; set; }
+        public ConfirmedServices.WritePropertyDelegate CallBack { get; set; }
 
         public WriteProperty(byte[] apdu)
         {

@@ -13,10 +13,15 @@ namespace BACSharp.Services.Acknowledgement
         public BacNetEnums.BACNET_ERROR_CLASS ErrorClass { get; set; }
         public BacNetEnums.BACNET_ERROR_CODE ErrorCode { get; set; }
         public byte InvokeId { get; set; }
+        public byte ServiceChoise { get; set; }
 
         public ErrorAck(byte[] apdu)
         {
-            InvokeId = apdu[1];
+            if (apdu.Length > 2)
+            {
+                InvokeId = apdu[1];
+                ServiceChoise = apdu[2];
+            }
             int len = 3;
             //Error class
             BacNetTag errorClassTag = new BacNetTag(apdu, len, ref len);

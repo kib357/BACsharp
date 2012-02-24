@@ -89,13 +89,7 @@ namespace BACSharp
         //todo
         private void ParseErrorAck(BacNetRawMessage msg, IPEndPoint endPoint)
         {
-            if(msg.Apdu.Length > 2)
-                switch (msg.Apdu[2])
-                {
-                    case 12:
-                        BacNetDevice.Instance.Response.ReceivedErrorAck(msg);
-                        break;
-                }
+            BacNetDevice.Instance.Response.ReceivedErrorAck(msg);
         }
 
         private void ParseUncofirmed(BacNetRawMessage msg, IPEndPoint endPoint)
@@ -148,7 +142,7 @@ namespace BACSharp
 
         private void ParseSimpleAck(BacNetRawMessage msg, IPEndPoint endPoint)
         {
-            
+            BacNetDevice.Instance.Response.ReceivedSimpleAck(msg);
         }
 
         private void ParseComplexAck(BacNetRawMessage msg, IPEndPoint endPoint)

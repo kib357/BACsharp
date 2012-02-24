@@ -18,8 +18,11 @@ namespace BACSharp.Services.Acknowledgement
 
         public SimpleAck(byte[] apdu)
         {
-            if (apdu.Length > 1)
+            if (apdu.Length > 2)
+            {
                 InvokeId = apdu[1];
+                ServiceChoise = apdu[2];
+            }
         }
 
         public byte[] GetBytes()

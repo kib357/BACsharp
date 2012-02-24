@@ -37,6 +37,13 @@ namespace BACSharp
 {
     public class BacNetEnums
     {
+        public static string GetErrorMessage(byte code)
+        {
+            if (code == 0x1f)
+                return "Error: unknown-object";
+            return "Error";
+        }
+
         public const int BACNET_MAX_INSTANCE = 0x3FFFFF;
 
         public const int BACNET_PROTOCOL_VERSION = 0x1;
