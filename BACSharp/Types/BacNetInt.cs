@@ -12,6 +12,11 @@ namespace BACSharp.Types
         public BacNetInt()
         {}
 
+        public BacNetInt(int value)
+        {
+            Value = value;
+        }
+
         public BacNetInt(byte[] apdu, int startIndex, int length, ref int len)
         {
             if (length > 4)

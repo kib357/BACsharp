@@ -12,6 +12,11 @@ namespace BACSharp.Types
         public BacNetEnumeration()
         {}
 
+        public BacNetEnumeration(uint value)
+        {
+            Value = value;
+        }
+
         public override string ToString()
         {
             return Value.ToString();
@@ -19,7 +24,6 @@ namespace BACSharp.Types
 
         public BacNetEnumeration(byte[] apdu, int startIndex, int length, ref int len)
         {
-            //!!!!Возможна ошибка с параметром len!!!!
             BacNetUInt res = new BacNetUInt(apdu, startIndex, length, ref len);
             Value = res.Value;
         }

@@ -61,7 +61,7 @@ namespace BACSharp.Services.Confirmed
             BacNetObject tmpObj;
             try
             {
-                tmpObj = BacNetObject.Get(addrArray[1]);
+                tmpObj = new BacNetObject(addrArray[1]);
             }
             catch (Exception ex)
             {

@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using BACSharp.NPDU;
-using BACSharp.Network;
 using BACSharp.Types;
 
 namespace BACSharp
 {
     public class BacNetListener
     {
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private UdpClient _udpReceiveClient;        
         private readonly int _udpPort;
         private ArrayList messagePool;
-        //private object _receiveState;
 
         public BacNetListener(int udpport = 47808)
         {
