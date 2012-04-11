@@ -8,8 +8,13 @@ namespace BACSharp.Types
     public class BacNetTag
     {
         private byte _number;
-        public bool LongTag { get { return _longTag; } }
         private bool _longTag;
+
+        public bool LongTag 
+        { 
+            get { return _longTag; }
+            set { _longTag = value; }
+        }
 
         public byte Number
         {

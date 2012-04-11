@@ -65,6 +65,8 @@
     <Compile Include="Services\Acknowledgement\SegmentAck.cs" />
     <Compile Include="Services\Acknowledgement\SimpleAck.cs" />
     <Compile Include="Services\Confirmed\ConfirmedServices.cs" />
+    <Compile Include="Services\Confirmed\CreateObject.cs" />
+    <Compile Include="Services\Confirmed\DeleteObject.cs" />
     <Compile Include="Services\Confirmed\ReadPropertyMultiple.cs" />
     <Compile Include="Services\Confirmed\WriteProperty.cs" />
     <Compile Include="Services\Confirmed\ReadProperty.cs" />

@@ -221,6 +221,51 @@ namespace BACSharp.Services.Confirmed
             }
             return BacNetDevice.Instance.Waiter;           
         }
+
+        public BacNetObject CreateObject(uint instanceId, BacNetObject bacNetObject) 
+        {
+            var npdu = new BacNetIpNpdu();
+            var apdu = new CreateObject(bacNetObject);
+            IPEndPoint endPoint = null;
+
+            foreach (BacNetRemoteDevice remoteDevice in BacNetDevice.Instance.Remote)
+            {
+                if (remoteDevice.InstanceNumber == instanceId)
+                {
+                    npdu.Destination = remoteDevice.BacAddress;
+                    endPoint = remoteDevice.EndPoint;
+                    break;
+                }
+            }
+
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
+
+            return apdu.NewObject;
+        }
+
+        public void DeletObject(uint instanceId, uint objectId) 
+        {
+            foreach (BacNetRemoteDevice remoteDivice in BacNetDevice.Instance.Remote) 
+            {
+                if (remoteDivice.InstanceNumber == instanceId) 
+                {
+                    foreach (var bacNetObject in remoteDivice.Objects) 
+                    {
+                        if (bacNetObject.ObjectId == objectId) 
+                        {
+                            var npdu = new BacNetIpNpdu();
+                            npdu.Destination = remoteDivice.BacAddress;
+
+                            var apdu = new DeleteObject(bacNetObject);
+
+                            BacNetDevice.Instance.Services.Execute(npdu, apdu, remoteDivice.EndPoint);
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
       
     }
 }

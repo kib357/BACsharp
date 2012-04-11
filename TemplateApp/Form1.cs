@@ -642,5 +642,44 @@ namespace TemplateApp
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+
+                _device.Services.Confirmed.CreateObject(dev, new BacNetObject()
+                {
+                    ObjectId = 8006,
+                    ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE,
+                    Properties = new List<BacNetProperty>() 
+                    {
+                        new BacNetProperty() 
+                        { 
+                            PropertyId = new BacNetUInt(77), 
+                            Values = new ArrayList() 
+                            {
+                                //new BacNetInt(1),
+                                new BacNetString("abc")
+                            }
+                        } 
+                    }
+                });
+            }
+            catch{}
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+                uint obj = UInt32.Parse(listBox2.SelectedItem.ToString().Substring(listBox2.SelectedItem.ToString().IndexOf('.') + 1));
+
+                _device.Services.Confirmed.DeletObject(dev, obj);
+            }
+            catch { }
+        }
     }
 }
