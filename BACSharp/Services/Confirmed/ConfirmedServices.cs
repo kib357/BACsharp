@@ -98,6 +98,58 @@ namespace BACSharp.Services.Confirmed
             return property;
         }
 
+        public bool? SubscribeCOV(string address, BacNetEnums.BACNET_PROPERTY_ID propId = BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE)
+        {
+            string[] addrArray = address.Split('.');
+            if (addrArray.Length != 2)
+            {
+                _logger.Warn("Wrong address: " + address);
+                return null;
+            }
+
+            BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(addrArray[0]));
+            if (remote == null)
+            {
+                _logger.Warn("No such device in network. Device number: " + addrArray[0]);
+                return null;
+            }
+
+            BacNetObject tmpObj;
+            try
+            {
+                tmpObj = new BacNetObject(addrArray[1]);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex.Message);
+                return null;
+            }
+
+            BacNetObject obj = remote.Objects.FirstOrDefault(s => s.ObjectId == tmpObj.ObjectId && s.ObjectType == tmpObj.ObjectType);
+            if (obj == null)
+            {
+                remote.Objects.Add(tmpObj);
+                obj = tmpObj;
+            }
+            var apdu = new SubscribeCOV(obj) { ProccessId = new BacNetUInt(5556) };
+            var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };
+
+            BacNetDevice.Instance.Waiter = apdu.InvokeId;
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+            ArrayList valueList = WaitForResponce(apdu.InvokeId) as ArrayList;
+
+            /*BacNetProperty property = obj.Properties.FirstOrDefault(s => s.PropertyId.Value == (uint)propId);
+            if (property != null)
+                property.Values = valueList ?? new ArrayList();
+            else
+            {
+                property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)propId }, Values = valueList ?? new ArrayList() };
+                obj.Properties.Add(property);
+            }
+            return property;*/
+            return true;
+        }
+
         public List<BacNetObject> Rpm(uint instanceId, List<BacNetObject> objectList)
         {
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));

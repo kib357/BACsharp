@@ -681,5 +681,18 @@ namespace TemplateApp
             }
             catch { }
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                /*uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+                uint obj = UInt32.Parse(listBox2.SelectedItem.ToString().Substring(listBox2.SelectedItem.ToString().IndexOf('.') + 1));
+                string address = dev + "." + obj;*/
+                _device.Services.Confirmed.SubscribeCOV("100.AV1");
+                
+            }
+            catch { }
+        }
     }
 }
