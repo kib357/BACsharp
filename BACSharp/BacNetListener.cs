@@ -210,7 +210,7 @@ namespace BACSharp
             BacNetRawMessage res = new BacNetRawMessage();
             byte[] length = ByteConverter.GetBytes((ushort)resMsg.Count);
             resMsg[2] = length[0];
-            resMsg[3] = length[1];
+            resMsg[3] = length.Length == 2 ? length[1] : (byte)0;
             res.All = (byte[]) resMsg.ToArray(typeof (byte));
             return res;
         }

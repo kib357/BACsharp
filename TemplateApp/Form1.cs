@@ -694,5 +694,14 @@ namespace TemplateApp
             }
             catch { }
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var address = textBox3.Text.Split('-');
+            var propertyId = BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE;
+            Enum.TryParse(address[1], out propertyId);
+            var property = _device.Services.Confirmed.ReadProperty(address[0], propertyId);
+            textBox4.Text = property.Value;
+        }
     }
 }

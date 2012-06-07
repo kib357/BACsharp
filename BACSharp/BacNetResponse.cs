@@ -81,7 +81,13 @@ namespace BACSharp
 
         public void ReceivedEventNotification(BacNetRawMessage msg)
         {
-            //todo: implement method
+            UnconfirmedEventNotification apdu;
+            try
+            {
+                apdu = new UnconfirmedEventNotification(msg.Apdu);
+            }
+            catch { return; }
+            BacNetDevice.Instance.OnNotificationEvent(apdu);
         }
 
         public void ReceivedPrivateTransfer(BacNetRawMessage msg)

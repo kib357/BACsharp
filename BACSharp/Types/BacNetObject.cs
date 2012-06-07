@@ -85,6 +85,8 @@ namespace BACSharp.Types
                     return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_COMMAND;
                 case "DEV":
                     return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE;
+                case "DC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DOOR;
                 case "EE":
                     return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_ENROLLMENT;
                 case "EL":
@@ -230,6 +232,8 @@ namespace BACSharp.Types
                     res = "CMD"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE:
                     res = "DEV"; break;
+                case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DOOR:
+                    res = "DC"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_ENROLLMENT:
                     res = "EE"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_LOG:

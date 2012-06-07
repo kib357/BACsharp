@@ -7,10 +7,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using BACSharp.Network;
+using BACSharp.Services.Unconfirmed;
 using BACSharp.Types;
 
 namespace BACSharp
 {
+    public delegate void NotificationEventHandler(UnconfirmedEventNotification notification);
+
     public sealed class BacNetDevice
     {
         #region Fields
@@ -24,6 +27,14 @@ namespace BACSharp
         #endregion
 
         #region Properties
+
+        public event NotificationEventHandler NotificationEvent;
+
+        public void OnNotificationEvent(UnconfirmedEventNotification notification)
+        {
+            NotificationEventHandler handler = NotificationEvent;
+            if (handler != null) handler(notification);
+        }
 
         public const int VendorId = 500;
         private byte _invokeId = 0;
