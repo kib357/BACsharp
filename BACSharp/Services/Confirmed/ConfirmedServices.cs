@@ -54,7 +54,6 @@ namespace BACSharp.Services.Confirmed
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(addrArray[0]));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + addrArray[0]);
                 return null;
             }
 
@@ -155,7 +154,6 @@ namespace BACSharp.Services.Confirmed
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
                 return new List<BacNetObject>();
             }          
 
@@ -174,7 +172,6 @@ namespace BACSharp.Services.Confirmed
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
                 return;
             }
 

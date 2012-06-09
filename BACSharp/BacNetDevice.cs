@@ -53,7 +53,8 @@ namespace BACSharp
         public BacNetServices Services;
         internal BacNetListener Listener;
         internal BacNetResponse Response;
-        public List<BacNetRemoteDevice> Remote { get; internal set; } 
+        public List<BacNetRemoteDevice> Remote { get; internal set; }
+        private readonly Dictionary<uint, DateTime> LostDevices;
 
         #endregion
 
@@ -63,6 +64,7 @@ namespace BACSharp
             Services = new BacNetServices();
             Response = new BacNetResponse();
             WaitList = new Dictionary<int, object>();
+            LostDevices = new Dictionary<uint, DateTime>();
         }
 
         public static BacNetDevice Instance
@@ -95,14 +97,22 @@ namespace BACSharp
 
         internal BacNetRemoteDevice SearchRemote(BacNetRemoteDevice device)
         {
-            BacNetRemoteDevice rem =
-               Instance.Remote.FirstOrDefault(s => s.InstanceNumber == device.InstanceNumber);
+            if (LostDevices.ContainsKey(device.InstanceNumber))
+            {
+                if (DateTime.Now - LostDevices[device.InstanceNumber] < new TimeSpan(0, 0, 10))
+                    return null;
+                LostDevices.Remove(device.InstanceNumber);
+            }
+                
+            BacNetRemoteDevice rem = Instance.Remote.FirstOrDefault(s => s.InstanceNumber == device.InstanceNumber);
             if (rem == null)
             {
                 Instance.Services.Unconfirmed.WhoIs((ushort)device.InstanceNumber, (ushort)device.InstanceNumber, 500);
                 Thread.Sleep(500);
                 rem = Instance.Remote.FirstOrDefault(s => s.InstanceNumber == device.InstanceNumber);
             }
+            if (rem == null && !LostDevices.ContainsKey(device.InstanceNumber))
+                LostDevices.Add(device.InstanceNumber, DateTime.Now);
             return rem;
         }
     }

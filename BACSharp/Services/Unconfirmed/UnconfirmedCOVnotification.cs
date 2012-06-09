@@ -40,12 +40,14 @@ namespace BACSharp.Services.Unconfirmed
             tag = new BacNetTag(apdu, len, ref len);
 
             tag = new BacNetTag(apdu, len, ref len);
-            BacNetReal analogvalue = new BacNetReal(apdu, len, tag.Length, ref len);
+
+            //Это не правильно!!!!
+            /*BacNetReal analogvalue = new BacNetReal(apdu, len, tag.Length, ref len);
 
             //}
             tag = new BacNetTag(apdu, len, ref len);
 
-            tag = new BacNetTag(apdu, len, ref len);
+            tag = new BacNetTag(apdu, len, ref len);*/
 
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -154,7 +155,7 @@ namespace BACSharp.Types
                 }
             }
             BacNetEnums.BACNET_OBJECT_TYPE tmpType;
-            if (BacNetEnums.BACNET_OBJECT_TYPE.TryParse(objectType.ToString(), out tmpType))
+            if (Enum.TryParse(objectType.ToString(CultureInfo.InvariantCulture), out tmpType))
                 ObjectType = tmpType;
             len += 4;
         }

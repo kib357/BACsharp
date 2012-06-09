@@ -12,7 +12,6 @@ namespace BACSharp.Network
 {
     public class BacNetIpNetwork : IBacNetNetwork
     {
-        private UdpClient _udpSendClient;
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly object SyncRoot = new Object();
 
