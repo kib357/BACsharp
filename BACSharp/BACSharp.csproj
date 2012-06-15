@@ -65,11 +65,16 @@
     <Compile Include="Services\Acknowledgement\SegmentAck.cs" />
     <Compile Include="Services\Acknowledgement\SimpleAck.cs" />
     <Compile Include="Services\Confirmed\ConfirmedServices.cs" />
+    <Compile Include="Services\Confirmed\CreateObject.cs" />
+    <Compile Include="Services\Confirmed\DeleteObject.cs" />
     <Compile Include="Services\Confirmed\ReadPropertyMultiple.cs" />
+    <Compile Include="Services\Confirmed\SubscribeCOV.cs" />
     <Compile Include="Services\Confirmed\WriteProperty.cs" />
     <Compile Include="Services\Confirmed\ReadProperty.cs" />
     <Compile Include="Services\IBacNetService.cs" />
+    <Compile Include="Services\Unconfirmed\UnconfirmedEventNotification.cs" />
     <Compile Include="Services\Unconfirmed\IAm.cs" />
+    <Compile Include="Services\Unconfirmed\UnconfirmedCOVnotification.cs" />
     <Compile Include="Services\Unconfirmed\UnconfirmedServices.cs" />
     <Compile Include="Services\Unconfirmed\WhoIs.cs" />
     <Compile Include="Types\BacNetAddress.cs" />
@@ -86,6 +91,7 @@
     <Compile Include="Types\BacNetTag.cs" />
     <Compile Include="Types\BacNetUInt.cs" />
     <Compile Include="ArrayExtensions.cs" />
+    <Compile Include="Types\BacNetTimeStamp.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

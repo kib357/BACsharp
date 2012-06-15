@@ -64,12 +64,30 @@ namespace BACSharp
 
         public void ReceivedCovNotification(BacNetRawMessage msg)
         {
-            //todo: implement method
+            UnconfirmedCOVnotification apdu;
+            try
+            {
+                apdu = new UnconfirmedCOVnotification(msg.Apdu);
+            }
+            catch { throw; }
+
+            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+            {
+                if (apdu.Object == null)
+                    _logger.Warn("Received empty object");
+                BacNetDevice.Instance.Waiter = apdu;
+            }
         }
 
         public void ReceivedEventNotification(BacNetRawMessage msg)
         {
-            //todo: implement method
+            UnconfirmedEventNotification apdu;
+            try
+            {
+                apdu = new UnconfirmedEventNotification(msg.Apdu);
+            }
+            catch { return; }
+            BacNetDevice.Instance.OnNotificationEvent(apdu);
         }
 
         public void ReceivedPrivateTransfer(BacNetRawMessage msg)

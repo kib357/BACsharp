@@ -54,14 +54,13 @@ namespace BACSharp.Services.Confirmed
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(addrArray[0]));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + addrArray[0]);
                 return null;
             }
 
             BacNetObject tmpObj;
             try
             {
-                tmpObj = BacNetObject.Get(addrArray[1]);
+                tmpObj = new BacNetObject(addrArray[1]);
             }
             catch (Exception ex)
             {
@@ -98,12 +97,63 @@ namespace BACSharp.Services.Confirmed
             return property;
         }
 
+        public bool? SubscribeCOV(string address, BacNetEnums.BACNET_PROPERTY_ID propId = BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE)
+        {
+            string[] addrArray = address.Split('.');
+            if (addrArray.Length != 2)
+            {
+                _logger.Warn("Wrong address: " + address);
+                return null;
+            }
+
+            BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(addrArray[0]));
+            if (remote == null)
+            {
+                _logger.Warn("No such device in network. Device number: " + addrArray[0]);
+                return null;
+            }
+
+            BacNetObject tmpObj;
+            try
+            {
+                tmpObj = new BacNetObject(addrArray[1]);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex.Message);
+                return null;
+            }
+
+            BacNetObject obj = remote.Objects.FirstOrDefault(s => s.ObjectId == tmpObj.ObjectId && s.ObjectType == tmpObj.ObjectType);
+            if (obj == null)
+            {
+                remote.Objects.Add(tmpObj);
+                obj = tmpObj;
+            }
+            var apdu = new SubscribeCOV(obj) { ProccessId = new BacNetUInt(5556) };
+            var npdu = new BacNetIpNpdu { ExpectingReply = true, Destination = remote.BacAddress };
+
+            BacNetDevice.Instance.Waiter = apdu.InvokeId;
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, remote.EndPoint);
+            ArrayList valueList = WaitForResponce(apdu.InvokeId) as ArrayList;
+
+            /*BacNetProperty property = obj.Properties.FirstOrDefault(s => s.PropertyId.Value == (uint)propId);
+            if (property != null)
+                property.Values = valueList ?? new ArrayList();
+            else
+            {
+                property = new BacNetProperty { PropertyId = new BacNetUInt { Value = (uint)propId }, Values = valueList ?? new ArrayList() };
+                obj.Properties.Add(property);
+            }
+            return property;*/
+            return true;
+        }
+
         public List<BacNetObject> Rpm(uint instanceId, List<BacNetObject> objectList)
         {
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
                 return new List<BacNetObject>();
             }          
 
@@ -122,7 +172,6 @@ namespace BACSharp.Services.Confirmed
             BacNetRemoteDevice remote = BacNetDevice.Instance.SearchRemote(BacNetRemoteDevice.Get(instanceId.ToString()));
             if (remote == null)
             {
-                _logger.Warn("No such device in network. Device number: " + instanceId.ToString());
                 return;
             }
 
@@ -220,6 +269,51 @@ namespace BACSharp.Services.Confirmed
                 }                
             }
             return BacNetDevice.Instance.Waiter;           
+        }
+
+        public BacNetObject CreateObject(uint instanceId, BacNetObject bacNetObject) 
+        {
+            var npdu = new BacNetIpNpdu();
+            var apdu = new CreateObject(bacNetObject);
+            IPEndPoint endPoint = null;
+
+            foreach (BacNetRemoteDevice remoteDevice in BacNetDevice.Instance.Remote)
+            {
+                if (remoteDevice.InstanceNumber == instanceId)
+                {
+                    npdu.Destination = remoteDevice.BacAddress;
+                    endPoint = remoteDevice.EndPoint;
+                    break;
+                }
+            }
+
+            BacNetDevice.Instance.Services.Execute(npdu, apdu, endPoint);
+
+            return apdu.NewObject;
+        }
+
+        public void DeletObject(uint instanceId, uint objectId) 
+        {
+            foreach (BacNetRemoteDevice remoteDivice in BacNetDevice.Instance.Remote) 
+            {
+                if (remoteDivice.InstanceNumber == instanceId) 
+                {
+                    foreach (var bacNetObject in remoteDivice.Objects) 
+                    {
+                        if (bacNetObject.ObjectId == objectId) 
+                        {
+                            var npdu = new BacNetIpNpdu();
+                            npdu.Destination = remoteDivice.BacAddress;
+
+                            var apdu = new DeleteObject(bacNetObject);
+
+                            BacNetDevice.Instance.Services.Execute(npdu, apdu, remoteDivice.EndPoint);
+
+                            return;
+                        }
+                    }
+                }
+            }
         }
       
     }

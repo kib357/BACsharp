@@ -17,6 +17,11 @@ namespace BACSharp.Types
         public BacNetReal()
         {}
 
+        public BacNetReal(float value)
+        {
+            Value = value;
+        }
+
         public BacNetReal(byte[] apdu, int startIndex, int length, ref int len)
         {
             byte[] value = new byte[length];

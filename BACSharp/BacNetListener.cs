@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using BACSharp.NPDU;
-using BACSharp.Network;
 using BACSharp.Types;
 
 namespace BACSharp
 {
     public class BacNetListener
     {
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private UdpClient _udpReceiveClient;        
         private readonly int _udpPort;
         private ArrayList messagePool;
-        //private object _receiveState;
 
         public BacNetListener(int udpport = 47808)
         {
@@ -215,7 +210,7 @@ namespace BACSharp
             BacNetRawMessage res = new BacNetRawMessage();
             byte[] length = ByteConverter.GetBytes((ushort)resMsg.Count);
             resMsg[2] = length[0];
-            resMsg[3] = length[1];
+            resMsg[3] = length.Length == 2 ? length[1] : (byte)0;
             res.All = (byte[]) resMsg.ToArray(typeof (byte));
             return res;
         }

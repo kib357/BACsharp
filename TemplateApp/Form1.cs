@@ -642,5 +642,66 @@ namespace TemplateApp
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+
+                _device.Services.Confirmed.CreateObject(dev, new BacNetObject()
+                {
+                    ObjectId = 8006,
+                    ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE,
+                    Properties = new List<BacNetProperty>() 
+                    {
+                        new BacNetProperty() 
+                        { 
+                            PropertyId = new BacNetUInt(77), 
+                            Values = new ArrayList() 
+                            {
+                                //new BacNetInt(1),
+                                new BacNetString("abc")
+                            }
+                        } 
+                    }
+                });
+            }
+            catch{}
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+                uint obj = UInt32.Parse(listBox2.SelectedItem.ToString().Substring(listBox2.SelectedItem.ToString().IndexOf('.') + 1));
+
+                _device.Services.Confirmed.DeletObject(dev, obj);
+            }
+            catch { }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                /*uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
+                uint obj = UInt32.Parse(listBox2.SelectedItem.ToString().Substring(listBox2.SelectedItem.ToString().IndexOf('.') + 1));
+                string address = dev + "." + obj;*/
+                _device.Services.Confirmed.SubscribeCOV("100.AV1");
+                
+            }
+            catch { }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var address = textBox3.Text.Split('-');
+            var propertyId = BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE;
+            Enum.TryParse(address[1], out propertyId);
+            var property = _device.Services.Confirmed.ReadProperty(address[0], propertyId);
+            textBox4.Text = property.Value;
+        }
     }
 }

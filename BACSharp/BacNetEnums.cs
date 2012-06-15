@@ -795,6 +795,10 @@ namespace BACSharp
             /* Enumerated values 128-1023 may be used by others subject to  */
             /* the procedures and constraints described in Clause 23. */
             MAX_ASHRAE_OBJECT_TYPE = 32,        /* used for bit string loop */
+
+            /*DELTA CONTROLS*/
+            OBJECT_DOOR = 287,
+
             MAX_BACNET_OBJECT_TYPE = 1023
         }
 

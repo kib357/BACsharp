@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace BACSharp.Types
@@ -11,6 +10,20 @@ namespace BACSharp.Types
     {
         public BacNetEnums.BACNET_OBJECT_TYPE ObjectType { get; set; }
         public uint ObjectId { get; set; }
+
+        public BacNetProperty PresentValue
+        {
+            get
+            {
+                BacNetProperty property = Properties.FirstOrDefault(s => s.PropertyId.Value == (uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE);
+                if (property == null)
+                {
+                    Properties.Add(new BacNetProperty((uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE));
+                    property = Properties.Last();
+                }
+                return property;
+            }
+        }
 
         public List<BacNetProperty> Properties { get; set; }
 
@@ -22,6 +35,102 @@ namespace BACSharp.Types
         public BacNetObject()
         {
             InitializeFields();
+        }
+
+        public BacNetObject(string id, bool initPresentValueProperty = false)
+        {
+            InitializeFields();
+
+            if (initPresentValueProperty)
+            {
+                Properties.Add(new BacNetProperty {PropertyId = new BacNetUInt((uint)BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE)});
+            }
+
+            id = id.ToUpper();            
+
+            uint objId;
+            if (!uint.TryParse(new Regex(@"[0-9]+").Match(id).Value, out objId))
+                throw new Exception("Not valid string id - wrong object number");
+            ObjectId = objId;
+
+            var objType = new Regex(@"[a-z\-A-Z]+").Match(id).Value;
+            if (objType == string.Empty)
+                throw new Exception("Not valid string id - empty object type");
+
+            ObjectType = GetObjectType(objType);
+        }
+
+        public static BacNetEnums.BACNET_OBJECT_TYPE GetObjectType(string objType)
+        {
+            switch (objType)
+            {
+                case "AC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ACCUMULATOR;
+                case "AI":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT;
+                case "AO":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT;
+                case "AV":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE;
+                case "AR":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_AVERAGING;
+                case "BI":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT;
+                case "BO":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT;
+                case "BV":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE;
+                case "CAL":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_CALENDAR;
+                case "CMD":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_COMMAND;
+                case "DEV":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE;
+                case "DC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DOOR;
+                case "EE":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_ENROLLMENT;
+                case "EL":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_LOG;
+                case "FILE":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_FILE;
+                case "GG":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_GLOBAL_GROUP;
+                case "GR":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_GROUP;
+                case "LSP":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIFE_SAFETY_POINT;
+                case "LSZ":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIFE_SAFETY_ZONE;
+                case "LO":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIGHTING_OUTPUT;
+                case "LC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LOAD_CONTROL;
+                case "LOOP":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LOOP;
+                case "MI":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_INPUT;
+                case "MO":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_OUTPUT;
+                case "MV":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_VALUE;
+                case "NC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_NOTIFICATION_CLASS;
+                case "PROG":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_PROGRAM;
+                case "PC":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_PULSE_CONVERTER;
+                case "SCH":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE;
+                case "SV":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_STRUCTURED_VIEW;
+                case "TL":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_TRENDLOG;
+                case "TLM":
+                    return BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_TREND_LOG_MULTIPLE;
+                default:
+                    throw new Exception("Not valid string id - unknown object type");
+            }
         }
 
         public BacNetObject(byte[] apdu, int startIndex, ref int len)
@@ -46,7 +155,7 @@ namespace BACSharp.Types
                 }
             }
             BacNetEnums.BACNET_OBJECT_TYPE tmpType;
-            if (BacNetEnums.BACNET_OBJECT_TYPE.TryParse(objectType.ToString(), out tmpType))
+            if (Enum.TryParse(objectType.ToString(CultureInfo.InvariantCulture), out tmpType))
                 ObjectType = tmpType;
             len += 4;
         }
@@ -124,6 +233,8 @@ namespace BACSharp.Types
                     res = "CMD"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE:
                     res = "DEV"; break;
+                case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DOOR:
+                    res = "DC"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_ENROLLMENT:
                     res = "EE"; break;
                 case BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_LOG:
@@ -166,117 +277,6 @@ namespace BACSharp.Types
                     res = "TLM"; break;
             }
             return res + ObjectId;
-        }
-
-        public static BacNetObject Get(string id)
-        {
-            id = id.ToUpper();
-            string objType = new Regex(@"[a-z\-A-Z]+").Match(id).Value;
-            uint objId;
-            if (!uint.TryParse(new Regex(@"[0-9]+").Match(id).Value, out objId))
-                throw new Exception("Not valid string id - wrong object number");
-            if (objType == string.Empty)
-                throw new Exception("Not valid string id - empty object type");
-            var obj = new BacNetObject { ObjectId = objId};
-            switch (objType)
-            {
-                case "AC":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ACCUMULATOR;
-                    break;
-                case "AI":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_INPUT;
-                    break;
-                case "AO":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_OUTPUT;
-                    break;
-                case "AV":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE;
-                    break;
-                case "AR":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_AVERAGING;
-                    break;
-                case "BI":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_INPUT;
-                    break;
-                case "BO":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_OUTPUT;
-                    break;
-                case "BV":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_BINARY_VALUE;
-                    break;
-                case "CAL":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_CALENDAR;
-                    break;
-                case "CMD":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_COMMAND;
-                    break;
-                case "DEV":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_DEVICE;
-                    break;
-                case "EE":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_ENROLLMENT;
-                    break;
-                case "EL":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_EVENT_LOG;
-                    break;
-                case "FILE":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_FILE;
-                    break;
-                case "GG":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_GLOBAL_GROUP;
-                    break;
-                case "GR":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_GROUP;
-                    break;
-                case "LSP":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIFE_SAFETY_POINT;
-                    break;
-                case "LSZ":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIFE_SAFETY_ZONE;
-                    break;
-                case "LO":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LIGHTING_OUTPUT;
-                    break;
-                case "LC":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LOAD_CONTROL;
-                    break;
-                case "LOOP":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_LOOP;
-                    break;
-                case "MI":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_INPUT;
-                    break;
-                case "MO":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_OUTPUT;
-                    break;
-                case "MV":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_MULTI_STATE_VALUE;
-                    break;
-                case "NC":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_NOTIFICATION_CLASS;
-                    break;
-                case "PROG":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_PROGRAM;
-                    break;
-                case "PC":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_PULSE_CONVERTER;
-                    break;
-                case "SCH":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE;
-                    break;
-                case "SV":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_STRUCTURED_VIEW;
-                    break;
-                case "TL":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_TRENDLOG;
-                    break;
-                case "TLM":
-                    obj.ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_TREND_LOG_MULTIPLE;
-                    break;
-                default:
-                    throw new Exception("Not valid string id - unknown object type");
-            }
-            return obj;
-        }
+        }        
     }
 }
