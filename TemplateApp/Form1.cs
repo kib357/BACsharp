@@ -48,7 +48,7 @@ namespace TemplateApp
         private void whoIsButton_Click(object sender, EventArgs e)
         {
             _device.Services.Unconfirmed.WhoIs();
-            Thread.Sleep(1000);
+            Thread.Sleep(10000);
             foreach (var remoteDevice in _device.Remote)
             {
                 BacNetRemoteDevice rm = remoteDevice as BacNetRemoteDevice;
