@@ -798,6 +798,8 @@ namespace BACSharp
 
             /*DELTA CONTROLS*/
             OBJECT_DOOR = 287,
+            OBJECT_DOOR_GROUP = 288,
+            OBJECT_ACCESS_CONTROL_EVENT_LOG = 297,
 
             MAX_BACNET_OBJECT_TYPE = 1023
         }
