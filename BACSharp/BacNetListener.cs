@@ -13,11 +13,13 @@ namespace BACSharp
         private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private UdpClient _udpReceiveClient;        
         private readonly int _udpPort;
+        private readonly IPAddress _address;
         private ArrayList messagePool;
 
-        public BacNetListener(int udpport = 47808)
+        public BacNetListener(IPAddress address, int udpport = 47808)
         {
             _udpPort = udpport;
+            _address = address;
             BacNetDevice.Instance.Listen = true;
             messagePool = new ArrayList();
             Thread listener = new Thread(DoListen) {IsBackground = true};
@@ -26,8 +28,9 @@ namespace BACSharp
 
         private void DoListen()
         {
-            _udpReceiveClient = new UdpClient(_udpPort, AddressFamily.InterNetwork);
-            
+            _udpReceiveClient = new UdpClient();//_udpPort, AddressFamily.InterNetwork);
+            _udpReceiveClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _udpReceiveClient.Client.Bind(new IPEndPoint(_address, _udpPort));
             IPAddress mcAddress = IPAddress.Parse("224.0.0.0");
             _udpReceiveClient.JoinMulticastGroup(mcAddress);
             IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, _udpPort);

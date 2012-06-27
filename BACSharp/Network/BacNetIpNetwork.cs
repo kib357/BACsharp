@@ -15,16 +15,16 @@ namespace BACSharp.Network
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly object SyncRoot = new Object();
 
-        public BacNetIpNetwork(IPAddress adress, IPAddress mask,  int udpport = 47808)
+        public BacNetIpNetwork(IPAddress address, IPAddress mask,  int udpport = 47808)
         {
-            byte[] addressBytes = adress.GetAddressBytes();
+            byte[] addressBytes = address.GetAddressBytes();
             byte[] maskBytes = mask.GetAddressBytes();
             byte[] broadcastBytes = new byte[4];
             for (int i = 0; i < addressBytes.Length; i++)
             {
                 broadcastBytes[i] = (byte)(addressBytes[i] | (255 - maskBytes[i]));
             }
-            Address = adress;
+            Address = address;
             UdpPort = udpport;
             Broadcast = new IPAddress(broadcastBytes);
 
@@ -36,7 +36,7 @@ namespace BACSharp.Network
                 Thread.Sleep(100);
             }
 
-            BacNetDevice.Instance.Listener = new BacNetListener();
+            BacNetDevice.Instance.Listener = new BacNetListener(Address);
         }
 
         private IPAddress Address { get; set; }
@@ -48,7 +48,7 @@ namespace BACSharp.Network
         {
             lock (SyncRoot)
             {
-                UdpClient udpSendClient = new UdpClient() {EnableBroadcast = true};
+                var udpSendClient = new UdpClient() {EnableBroadcast = true};
                 udpSendClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 try
                 {
@@ -70,6 +70,12 @@ namespace BACSharp.Network
                 udpSendClient.Send(message, message.Length);
 
                 udpSendClient.Close();
+
+                /*var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                var ep = new IPEndPoint(Broadcast, 47808);
+
+                s.SendTo(message, ep);
+                s.Close();*/
             }
         }
 

@@ -52,35 +52,39 @@ namespace BACSharp
             switch (metaTag.Number)
             {
                 case 1: //UNSIGNED_INT
-                    BacNetBool boolValue = new BacNetBool(metaTag);
+                    var boolValue = new BacNetBool(metaTag);
                     res = boolValue;
                     break;
                 case 2: //UNSIGNED_INT
-                    BacNetUInt uIntValue = new BacNetUInt(apdu, len, metaTag.Length, ref len);
+                    var uIntValue = new BacNetUInt(apdu, len, metaTag.Length, ref len);
                     res = uIntValue;
                     break;
                 case 3: //SIGNED_INT
-                    BacNetInt intValue = new BacNetInt(apdu, len, metaTag.Length, ref len);
+                    var intValue = new BacNetInt(apdu, len, metaTag.Length, ref len);
                     res = intValue;
                     break;
                 case 4: //REAL
-                    BacNetReal realValue = new BacNetReal(apdu, len, metaTag.Length, ref len);
+                    var realValue = new BacNetReal(apdu, len, metaTag.Length, ref len);
                     res = realValue;
                     break;
                 case 5: //DOUBLE
-                    BacNetDouble doubleValue = new BacNetDouble(apdu, len, metaTag.Length, ref len);
+                    var doubleValue = new BacNetDouble(apdu, len, metaTag.Length, ref len);
                     res = doubleValue;
                     break;
                 case 7: //CHARACTER STRING
-                    BacNetString str = new BacNetString(apdu, len, metaTag.Length, ref len);
+                    var str = new BacNetString(apdu, len, metaTag.Length, ref len);
                     res = str;
                     break;
                 case 9: //ENUMERATION
-                    BacNetEnumeration enumValue = new BacNetEnumeration(apdu, len, metaTag.Length, ref len);
+                    var enumValue = new BacNetEnumeration(apdu, len, metaTag.Length, ref len);
                     res = enumValue;
                     break;
+                case 11: //TIME
+                    var time = new BacNetTime(apdu, len, ref len);
+                    res = time;
+                    break;
                 case 12: //OBJECT IDENTIFIER
-                    BacNetObject obj = new BacNetObject(apdu, len, ref len);
+                    var obj = new BacNetObject(apdu, len, ref len);
                     res = obj;
                     break;
             }            
@@ -89,54 +93,78 @@ namespace BACSharp
 
         public static byte[] GetPropertyValueBytes(object value, out int type)
         {
-            ArrayList res = new ArrayList();
-            BacNetBool boolValue = value as BacNetBool;
+            var res = new ArrayList();
+            var boolValue = value as BacNetBool;
             if (boolValue != null)
             {
                 type = 1;
                 return boolValue.GetBytes();
             }
-            BacNetUInt uIntValue = value as BacNetUInt;
+            var uIntValue = value as BacNetUInt;
             if (uIntValue != null)
             {
                 type = 2;
                 return uIntValue.GetBytes();
             }
-            BacNetInt intValue = value as BacNetInt;
+            var intValue = value as BacNetInt;
             if (intValue != null)
             {
                 type = 3;
                 return intValue.GetBytes();
             }
-            BacNetReal realValue = value as BacNetReal;
+            var realValue = value as BacNetReal;
             if (realValue != null)
             {
                 type = 4;
                 return realValue.GetBytes();
             }
-            BacNetDouble doubleValue = value as BacNetDouble;
+            var doubleValue = value as BacNetDouble;
             if (doubleValue != null)
             {
                 type = 5;
                 return doubleValue.GetBytes();
             }
-            BacNetString str = value as BacNetString;
+            var str = value as BacNetString;
             if (str != null)
             {
                 type = 7;
                 return str.GetBytes();
             }
-            BacNetEnumeration enumValue = value as BacNetEnumeration;
+            var enumValue = value as BacNetEnumeration;
             if (enumValue != null)
             {
                 type = 9;
                 return enumValue.GetBytes();
             }
-            BacNetObject obj = value as BacNetObject;
+            var obj = value as BacNetObject;
             if (obj != null)
             {
                 type = 12;
                 return obj.GetObjectBytes();
+            }
+            var schDayDictionary = value as Dictionary<BacNetTime, bool?>;
+            if (schDayDictionary != null)
+            {
+                var timeTag = new BacNetTag() { Class = false, Length = 4, Number = 11 };
+                var schRes = new ArrayList {(byte) 0x0E};
+                foreach (var timeValuePair in schDayDictionary)
+                {
+                    schRes.AddRange(timeTag.GetBytes());
+                    schRes.AddRange(timeValuePair.Key.GetBytes());
+
+                    if (timeValuePair.Value != null)
+                    {
+                        schRes.AddRange(new BacNetTag {Class = false, Length = 1, Number = 9}.GetBytes());
+                        schRes.Add((byte) (timeValuePair.Value == true ? 1 : 0));
+                    }
+                    else
+                    {
+                        schRes.Add((byte)(0x00));
+                    }
+                }
+                schRes.Add((byte)0x0F);
+                type = 0;
+                return (byte[])schRes.ToArray(typeof(byte));
             }
 
             type = 0;// убрать!!!!!!!!

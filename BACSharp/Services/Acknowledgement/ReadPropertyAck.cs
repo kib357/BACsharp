@@ -33,14 +33,47 @@ namespace BACSharp.Services.Acknowledgement
             {                
                 BacNetTag metaTag = new BacNetTag(apdu, len, ref len);
                 while (metaTag.Length != 7)
-                {
-                    object value = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len);
-                    ValueList.Add(value);
+                {                    
+                    if (metaTag.Class == false)
+                    {
+                        object value = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len);
+                        ValueList.Add(value);
+                    }
+                    else
+                    {
+                        if (metaTag.Length == 6 && PropertyId.Value == (int)BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE)
+                        {
+                            var value = BuildScheduleDay(apdu, ref len);
+                            ValueList.Add(value);
+                        }
+                    }                    
                     metaTag = new BacNetTag(apdu, len, ref len);
                 }
             }
-            BacNetProperty property = new BacNetProperty {PropertyId = PropertyId, Values = ValueList};
+            var property = new BacNetProperty {PropertyId = PropertyId, Values = ValueList};
             Obj.Properties.Add(property);
+        }
+
+        private static Dictionary<BacNetTime, bool?> BuildScheduleDay(byte[] apdu, ref int len)
+        {
+            BacNetTag metaTag;
+            var value = new Dictionary<BacNetTime, bool?>();
+            metaTag = new BacNetTag(apdu, len, ref len);
+            while (metaTag.Length != 7)
+            {
+                var time = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len) as BacNetTime;
+                metaTag = new BacNetTag(apdu, len, ref len);
+                var timeValue = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len) as BacNetEnumeration;
+                if (time != null)
+                {
+                    if (timeValue != null)
+                        value.Add(time, timeValue.Value == 1);
+                    else
+                        value.Add(time, value: null);
+                }
+                metaTag = new BacNetTag(apdu, len, ref len);
+            }
+            return value;
         }
 
 

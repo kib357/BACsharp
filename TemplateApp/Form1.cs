@@ -689,19 +689,27 @@ namespace TemplateApp
                 /*uint dev = UInt32.Parse(listBox1.SelectedItem.ToString());
                 uint obj = UInt32.Parse(listBox2.SelectedItem.ToString().Substring(listBox2.SelectedItem.ToString().IndexOf('.') + 1));
                 string address = dev + "." + obj;*/
-                _device.Services.Confirmed.SubscribeCOV("100.AV1");
-                
+                _device.Services.Confirmed.SubscribeCOV("100.AV1");                
             }
             catch { }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var address = textBox3.Text.Split('-');
+            /*var address = textBox3.Text.Split('-');
             var propertyId = BacNetEnums.BACNET_PROPERTY_ID.PROP_PRESENT_VALUE;
             Enum.TryParse(address[1], out propertyId);
             var property = _device.Services.Confirmed.ReadProperty(address[0], propertyId);
-            textBox4.Text = property.Value;
+            textBox4.Text = property.Value;*/
+
+
+            var sch = new BacNetWeeklySchedule();
+            sch.Monday.Add(new BacNetTime(12,14,2), true);
+            sch.Monday.Add(new BacNetTime(14, 14, 2), null);
+            _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 4, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
+            Thread.Sleep(500);
+            var sch1 = new BacNetWeeklySchedule();
+            sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH4", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;
         }
     }
 }

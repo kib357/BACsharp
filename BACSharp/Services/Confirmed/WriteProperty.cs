@@ -94,8 +94,11 @@ namespace BACSharp.Services.Confirmed
             {
                 int type;
                 byte[] valueBytes = ByteConverter.GetPropertyValueBytes(value, out type);
-                metaTag = new BacNetTag { Class = false, Length = (byte)valueBytes.Length, Number = (byte)type };
-                res.AddRange(metaTag.GetBytes());
+                if (type != 0)
+                {
+                    metaTag = new BacNetTag {Class = false, Length = (byte) valueBytes.Length, Number = (byte) type};
+                    res.AddRange(metaTag.GetBytes());
+                }
                 res.AddRange(valueBytes);
             }
 

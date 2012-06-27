@@ -242,7 +242,8 @@ namespace BACSharp.Services.Confirmed
             {
                 if (_writePropertyPool.ContainsKey(invokeID))
                 {
-                    _writePropertyPool[invokeID].CallBack(_writePropertyPool[invokeID].InstanceId, _writePropertyPool[invokeID].ObjectId, status);
+                    if (_writePropertyPool[invokeID].CallBack != null)
+                        _writePropertyPool[invokeID].CallBack(_writePropertyPool[invokeID].InstanceId, _writePropertyPool[invokeID].ObjectId, status);
                     _writePropertyPool.Remove(invokeID);
                 }
             }

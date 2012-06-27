@@ -87,8 +87,10 @@
     <Compile Include="Types\BacNetRemoteDevice.cs" />
     <Compile Include="Types\BacNetObject.cs" />
     <Compile Include="Types\BacNetProperty.cs" />
+    <Compile Include="Types\BacNetWeeklySchedule.cs" />
     <Compile Include="Types\BacNetString.cs" />
     <Compile Include="Types\BacNetTag.cs" />
+    <Compile Include="Types\BacNetTime.cs" />
     <Compile Include="Types\BacNetUInt.cs" />
     <Compile Include="ArrayExtensions.cs" />
     <Compile Include="Types\BacNetTimeStamp.cs" />
