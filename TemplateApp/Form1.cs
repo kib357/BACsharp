@@ -704,12 +704,14 @@ namespace TemplateApp
 
 
             var sch = new BacNetWeeklySchedule();
-            sch.Monday.Add(new BacNetTime(12,14,2), true);
+            //_device.Services.Confirmed.CreateObject(200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE });
+            //Thread.Sleep(500);
+            sch.Monday.Add(new BacNetTime(12,14,2), new BacNetReal{Value = 32});
             sch.Monday.Add(new BacNetTime(14, 14, 2), null);
-            _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 4, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
+            _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
             Thread.Sleep(500);
             var sch1 = new BacNetWeeklySchedule();
-            sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH4", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;
+            sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;
         }
     }
 }

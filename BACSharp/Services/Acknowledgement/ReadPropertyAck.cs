@@ -54,22 +54,18 @@ namespace BACSharp.Services.Acknowledgement
             Obj.Properties.Add(property);
         }
 
-        private static Dictionary<BacNetTime, bool?> BuildScheduleDay(byte[] apdu, ref int len)
+        private static Dictionary<BacNetTime, object> BuildScheduleDay(byte[] apdu, ref int len)
         {
-            BacNetTag metaTag;
-            var value = new Dictionary<BacNetTime, bool?>();
-            metaTag = new BacNetTag(apdu, len, ref len);
+            var value = new Dictionary<BacNetTime, object>();
+            var metaTag = new BacNetTag(apdu, len, ref len);
             while (metaTag.Length != 7)
             {
                 var time = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len) as BacNetTime;
                 metaTag = new BacNetTag(apdu, len, ref len);
-                var timeValue = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len) as BacNetEnumeration;
+                var timeValue = ByteConverter.GetAppTagValue(apdu, len, metaTag, ref len);
                 if (time != null)
                 {
-                    if (timeValue != null)
-                        value.Add(time, timeValue.Value == 1);
-                    else
-                        value.Add(time, value: null);
+                    value.Add(time, timeValue);
                 }
                 metaTag = new BacNetTag(apdu, len, ref len);
             }

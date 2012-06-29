@@ -16,36 +16,36 @@ namespace BACSharp.Types
             {
                 if (value.Count == 7)
                 {
-                    if (value.Cast<object>().Any(day => !(day is Dictionary<BacNetTime, bool?>)))
+                    if (value.Cast<object>().Any(day => !(day is Dictionary<BacNetTime, object>)))
                         return;
-                    Monday = value[0] as Dictionary<BacNetTime, bool?>;
-                    Tuesday = value[1] as Dictionary<BacNetTime, bool?>;
-                    Wednesday = value[2] as Dictionary<BacNetTime, bool?>;
-                    Thursday = value[3] as Dictionary<BacNetTime, bool?>;
-                    Friday = value[4] as Dictionary<BacNetTime, bool?>;
-                    Saturday = value[5] as Dictionary<BacNetTime, bool?>;
-                    Sunday = value[6] as Dictionary<BacNetTime, bool?>;
+                    Monday = value[0] as Dictionary<BacNetTime, object>;
+                    Tuesday = value[1] as Dictionary<BacNetTime, object>;
+                    Wednesday = value[2] as Dictionary<BacNetTime, object>;
+                    Thursday = value[3] as Dictionary<BacNetTime, object>;
+                    Friday = value[4] as Dictionary<BacNetTime, object>;
+                    Saturday = value[5] as Dictionary<BacNetTime, object>;
+                    Sunday = value[6] as Dictionary<BacNetTime, object>;
                 }
             }
         }
 
-        public Dictionary<BacNetTime, bool?> Monday { get; set; }
-        public Dictionary<BacNetTime, bool?> Tuesday { get; set; }
-        public Dictionary<BacNetTime, bool?> Wednesday { get; set; }
-        public Dictionary<BacNetTime, bool?> Thursday { get; set; }
-        public Dictionary<BacNetTime, bool?> Friday { get; set; }
-        public Dictionary<BacNetTime, bool?> Saturday { get; set; }
-        public Dictionary<BacNetTime, bool?> Sunday { get; set; }
+        public Dictionary<BacNetTime, object> Monday { get; set; }
+        public Dictionary<BacNetTime, object> Tuesday { get; set; }
+        public Dictionary<BacNetTime, object> Wednesday { get; set; }
+        public Dictionary<BacNetTime, object> Thursday { get; set; }
+        public Dictionary<BacNetTime, object> Friday { get; set; }
+        public Dictionary<BacNetTime, object> Saturday { get; set; }
+        public Dictionary<BacNetTime, object> Sunday { get; set; }
 
         public BacNetWeeklySchedule()
         {
-            Monday = new Dictionary<BacNetTime, bool?>();
-            Tuesday = new Dictionary<BacNetTime, bool?>();
-            Wednesday = new Dictionary<BacNetTime, bool?>();
-            Thursday = new Dictionary<BacNetTime, bool?>();
-            Friday = new Dictionary<BacNetTime, bool?>();
-            Saturday = new Dictionary<BacNetTime, bool?>();
-            Sunday = new Dictionary<BacNetTime, bool?>();
+            Monday = new Dictionary<BacNetTime, object>();
+            Tuesday = new Dictionary<BacNetTime, object>();
+            Wednesday = new Dictionary<BacNetTime, object>();
+            Thursday = new Dictionary<BacNetTime, object>();
+            Friday = new Dictionary<BacNetTime, object>();
+            Saturday = new Dictionary<BacNetTime, object>();
+            Sunday = new Dictionary<BacNetTime, object>();
         }       
     }
 }

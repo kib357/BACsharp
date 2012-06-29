@@ -142,7 +142,7 @@ namespace BACSharp
                 type = 12;
                 return obj.GetObjectBytes();
             }
-            var schDayDictionary = value as Dictionary<BacNetTime, bool?>;
+            var schDayDictionary = value as Dictionary<BacNetTime, object>;
             if (schDayDictionary != null)
             {
                 var timeTag = new BacNetTag() { Class = false, Length = 4, Number = 11 };
@@ -154,8 +154,11 @@ namespace BACSharp
 
                     if (timeValuePair.Value != null)
                     {
-                        schRes.AddRange(new BacNetTag {Class = false, Length = 1, Number = 9}.GetBytes());
-                        schRes.Add((byte) (timeValuePair.Value == true ? 1 : 0));
+                        int localType;
+                        byte[] valueBytes = GetPropertyValueBytes(timeValuePair.Value, out localType);
+                        var metaTag = new BacNetTag { Class = false, Length = (byte)valueBytes.Length, Number = (byte)localType };
+                        schRes.AddRange(metaTag.GetBytes());
+                        schRes.AddRange(valueBytes);
                     }
                     else
                     {
