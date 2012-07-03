@@ -48,7 +48,7 @@ namespace TemplateApp
         private void whoIsButton_Click(object sender, EventArgs e)
         {
             _device.Services.Unconfirmed.WhoIs();
-            Thread.Sleep(10000);
+            Thread.Sleep(3000);
             foreach (var remoteDevice in _device.Remote)
             {
                 BacNetRemoteDevice rm = remoteDevice as BacNetRemoteDevice;
@@ -703,7 +703,7 @@ namespace TemplateApp
             textBox4.Text = property.Value;*/
 
 
-            var sch = new BacNetWeeklySchedule();
+            /*var sch = new BacNetWeeklySchedule();
             //_device.Services.Confirmed.CreateObject(200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE });
             //Thread.Sleep(500);
             sch.Monday.Add(new BacNetTime(12,14,2), new BacNetReal{Value = 32});
@@ -711,7 +711,9 @@ namespace TemplateApp
             _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
             Thread.Sleep(500);
             var sch1 = new BacNetWeeklySchedule();
-            sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;
+            sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;*/
+
+            var k = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_LIST_OF_OBJECT_PROPERTY_REFERENCES);
         }
     }
 }

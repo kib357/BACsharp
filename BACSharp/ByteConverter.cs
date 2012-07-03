@@ -51,6 +51,10 @@ namespace BACSharp
             object res = null;
             switch (metaTag.Number)
             {
+                case 0: //OBJECT IDENTIFIER
+                    var oiValue = new BacNetObject(apdu, len, ref len);
+                    res = oiValue;
+                    break;
                 case 1: //UNSIGNED_INT
                     var boolValue = new BacNetBool(metaTag);
                     res = boolValue;
