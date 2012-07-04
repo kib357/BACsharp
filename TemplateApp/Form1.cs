@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -704,16 +705,24 @@ namespace TemplateApp
 
 
             /*var sch = new BacNetWeeklySchedule();
-            //_device.Services.Confirmed.CreateObject(200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE });
-            //Thread.Sleep(500);
+            //_device.Services.Confirmed.CreateObject(200, new BacNetObject { ObjectId = 20, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE });
+            Thread.Sleep(500);
             sch.Monday.Add(new BacNetTime(12,14,2), new BacNetReal{Value = 32});
             sch.Monday.Add(new BacNetTime(14, 14, 2), null);
-            _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
+            sch.Monday.Add(new BacNetTime(16, 10, 2), new BacNetEnumeration{ Value = 1 });
+            sch.Monday.Add(new BacNetTime(17, 0, 0), null);
+
+            _device.Services.Confirmed.WriteProperty((uint)200, new BacNetObject { ObjectId = 20, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE }, BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE, sch.ValueList);
             Thread.Sleep(500);
             var sch1 = new BacNetWeeklySchedule();
             sch1.ValueList = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_WEEKLY_SCHEDULE).Values;*/
-
+            
             var k = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_LIST_OF_OBJECT_PROPERTY_REFERENCES);
+            var bcObject = new BacNetObject {ObjectId = 5, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_ANALOG_VALUE};
+            k.Values.Add(new BacNetObjectPropertyRef {ObjectId = bcObject, PropertyId = new BacNetUInt{Value = 85}});
+            _device.Services.Confirmed.WriteProperty(200, new BacNetObject { ObjectId = 19, ObjectType = BacNetEnums.BACNET_OBJECT_TYPE.OBJECT_SCHEDULE },
+                                                     BacNetEnums.BACNET_PROPERTY_ID.PROP_LIST_OF_OBJECT_PROPERTY_REFERENCES, k.Values);
+            var b = _device.Services.Confirmed.ReadProperty("200.SCH19", BacNetEnums.BACNET_PROPERTY_ID.PROP_LIST_OF_OBJECT_PROPERTY_REFERENCES);
         }
     }
 }

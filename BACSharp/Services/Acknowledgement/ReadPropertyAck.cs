@@ -61,21 +61,10 @@ namespace BACSharp.Services.Acknowledgement
 
         private object BuildObjectPropertyReference(byte[] apdu, ref int len)
         {
-            var value = new KeyValuePair<BacNetObject, int>();
             var objId = new BacNetObject(apdu, len, ref len);
             var metaTag = new BacNetTag(apdu, len, ref len);
-            int propId = 0;
-            if (metaTag.Number == 1)
-            {
-                byte[] valuesArray = new byte[4];                
-                for (int i = 0;i<metaTag.Length;i++)
-                {
-                    valuesArray[i] = apdu[len];
-                    len++;
-                }
-                propId = BitConverter.ToInt32(valuesArray, 0);
-            }
-            return objId.GetStringId() + "-" + propId;
+            var propId = new BacNetUInt(apdu, len, metaTag.Length, ref len);
+            return new BacNetObjectPropertyRef {ObjectId = objId, PropertyId = propId};
         }
 
         private static Dictionary<BacNetTime, object> BuildScheduleDay(byte[] apdu, ref int len)

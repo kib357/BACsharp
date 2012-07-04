@@ -82,6 +82,7 @@
     <Compile Include="Types\BacNetDouble.cs" />
     <Compile Include="Types\BacNetEnumeration.cs" />
     <Compile Include="Types\BacNetInt.cs" />
+    <Compile Include="Types\BacNetObjectPropertyRef.cs" />
     <Compile Include="Types\BacNetRawMessage.cs" />
     <Compile Include="Types\BacNetReal.cs" />
     <Compile Include="Types\BacNetRemoteDevice.cs" />

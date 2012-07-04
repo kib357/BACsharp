@@ -51,10 +51,6 @@ namespace BACSharp
             object res = null;
             switch (metaTag.Number)
             {
-                case 0: //OBJECT IDENTIFIER
-                    var oiValue = new BacNetObject(apdu, len, ref len);
-                    res = oiValue;
-                    break;
                 case 1: //UNSIGNED_INT
                     var boolValue = new BacNetBool(metaTag);
                     res = boolValue;
@@ -172,6 +168,18 @@ namespace BACSharp
                 schRes.Add((byte)0x0F);
                 type = 0;
                 return (byte[])schRes.ToArray(typeof(byte));
+            }
+            var objectPropertyRef = value as BacNetObjectPropertyRef;
+            if (objectPropertyRef != null)
+            {
+                var objectTag = new BacNetTag() { Class = true, Length = 4, Number = 0 };
+                res.AddRange(objectTag.GetBytes());
+                res.AddRange(objectPropertyRef.ObjectId.GetObjectBytes());
+                var propTag = new BacNetTag() { Class = true, Length = (byte)objectPropertyRef.PropertyId.GetLength(), Number = 1 };
+                res.AddRange(propTag.GetBytes());
+                res.AddRange(objectPropertyRef.PropertyId.GetBytes());
+                type = 0;
+                return (byte[])res.ToArray(typeof(byte));
             }
 
             type = 0;// убрать!!!!!!!!
