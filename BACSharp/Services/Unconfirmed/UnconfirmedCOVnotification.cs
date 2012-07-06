@@ -6,7 +6,7 @@ using BACSharp.Types;
 
 namespace BACSharp.Services.Unconfirmed
 {
-    class UnconfirmedCOVnotification
+    class UnconfirmedCOVnotification : IBacNetApdu
     {
         public BacNetUInt ProccessId { get; private set; }
         public byte InvokeId { get; private set; }
@@ -19,7 +19,7 @@ namespace BACSharp.Services.Unconfirmed
         {
             int len = 2;
 
-            BacNetTag tag = new BacNetTag(apdu, len, ref len);
+            var tag = new BacNetTag(apdu, len, ref len);
             ProccessId = new BacNetUInt(apdu, len, tag.Length, ref len);
 
             tag = new BacNetTag(apdu, len, ref len);
@@ -34,7 +34,7 @@ namespace BACSharp.Services.Unconfirmed
             tag = new BacNetTag(apdu, len, ref len);
 
             tag = new BacNetTag(apdu, len, ref len);
-            BacNetUInt value = new BacNetUInt(apdu, len, tag.Length, ref len);
+            var value = new BacNetUInt(apdu, len, tag.Length, ref len);
 
             //{
             tag = new BacNetTag(apdu, len, ref len);
@@ -52,6 +52,9 @@ namespace BACSharp.Services.Unconfirmed
         }
 
 
-
+        public byte[] GetBytes()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

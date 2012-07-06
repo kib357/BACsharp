@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BACSharp.APDU;
 using BACSharp.Types;
-using BACSharp.Services.Confirmed;
 
 namespace BACSharp.Services.Confirmed
 {
@@ -14,7 +10,6 @@ namespace BACSharp.Services.Confirmed
         public List<BacNetObject> ObjectList { get; set; }
         public int InvokeId { get; set; }
         public uint InstanceId { get; set; }
-        public ConfirmedServices.RpmEDelegate CallBack { get; set; }
         public DateTime Created { get; private set; }
 
         public ReadPropertyMultiple(byte[] apdu)

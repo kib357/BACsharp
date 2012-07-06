@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BACSharp.APDU;
 using BACSharp.Types;
 
 namespace BACSharp.Services.Confirmed
@@ -16,7 +15,6 @@ namespace BACSharp.Services.Confirmed
         public ArrayList ValueList { get; set; }
         public int InvokeId { get; set; }
         public uint InstanceId { get; set; }
-        public ConfirmedServices.WritePropertyDelegate CallBack { get; set; }
 
         public WriteProperty(byte[] apdu)
         {

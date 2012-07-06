@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using BACSharp.Types;
 
 namespace BACSharp.NPDU
@@ -9,9 +6,7 @@ namespace BACSharp.NPDU
     public class BacNetIpNpdu : IBacNetNpdu
     {
         public BacNetIpNpdu()
-        {
-            
-        }
+        {}
 
         public BacNetIpNpdu(byte[] npduBytes)
         {

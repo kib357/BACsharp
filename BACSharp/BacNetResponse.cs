@@ -11,31 +11,47 @@ using BACSharp.Types;
 
 namespace BACSharp
 {
+    //UnConfirmed
+    public delegate void ReceivedIAmEventHandler(BacNetMessage message);
+    public delegate void ReceivedCovNotificationEventHandler(BacNetMessage message);
+    public delegate void ReceivedEventNotificationEventHandler(BacNetMessage message);
+    public delegate void ReceivedWhoIsEventHandler(BacNetMessage message);
+
+    //Confirmed
+    public delegate void ReceivedReadPropertyEventHandler(BacNetMessage message);
+
+    //Acknowledgement
+    public delegate void ReceivedReadPropertyAckEventHandler(BacNetMessage message);
+    public delegate void ReceivedReadPropertyMultipleAckEventHandler(BacNetMessage message);
+    public delegate void ReceivedErrorAckEventHandler(BacNetMessage message);
+    public delegate void ReceivedSimpleAckEventHandler(BacNetMessage message);
+
     public class BacNetResponse
     {
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public BacNetResponse()
-        {    
-        }
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Unconfirmed
 
+        public event ReceivedIAmEventHandler ReceivedIAmEvent;
+        public void OnReceivedIAmEvent(BacNetMessage message)
+        {
+            ReceivedIAmEventHandler handler = ReceivedIAmEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedIAm(BacNetRawMessage msg, IPEndPoint endPoint)
         {
-            BacNetRemoteDevice newDevice = new BacNetRemoteDevice();
-            newDevice.EndPoint = endPoint;
-
-            BacNetIpNpdu npdu;
-            IAm apdu;
+            var newDevice = new BacNetRemoteDevice {EndPoint = endPoint};
+            var npdu = new BacNetIpNpdu();
+            var apdu = new IAm();
             try
             {
                 npdu = new BacNetIpNpdu(msg.Npdu);
                 apdu = new IAm(msg.Apdu);
+                OnReceivedIAmEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
             }
             catch (Exception ex)
             {
-                _logger.WarnException("Received malformed I-am", ex);
+                _logger.WarnException("Malformed I-am: ", ex);
                 return;
             }
             
@@ -49,7 +65,7 @@ namespace BACSharp
             if (newDevice.InstanceNumber == BacNetDevice.Instance.DeviceId)
                 return;
 
-            BacNetRemoteDevice rem =
+            var rem =
                 BacNetDevice.Instance.Remote.FirstOrDefault(s => s.InstanceNumber == newDevice.InstanceNumber);
             if (rem != null)
                 BacNetDevice.Instance.Remote.Remove(rem);
@@ -62,32 +78,44 @@ namespace BACSharp
             //todo: implement method
         }
 
+        public event ReceivedCovNotificationEventHandler ReceivedCovNotificationEvent;
+        public void OnReceivedCovNotificationEvent(BacNetMessage message)
+        {
+            var handler = ReceivedCovNotificationEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedCovNotification(BacNetRawMessage msg)
         {
-            UnconfirmedCOVnotification apdu;
             try
             {
-                apdu = new UnconfirmedCOVnotification(msg.Apdu);
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new UnconfirmedCOVnotification(msg.Apdu);
+                OnReceivedCovNotificationEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
             }
-            catch { throw; }
-
-            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
+            catch (Exception ex)
             {
-                if (apdu.Object == null)
-                    _logger.Warn("Received empty object");
-                BacNetDevice.Instance.Waiter = apdu;
-            }
+                _logger.WarnException("Malformed UnconfirmedCOVnotification: ", ex);
+            }            
         }
 
+        public event ReceivedEventNotificationEventHandler ReceivedEventNotificationEvent;
+        public void OnReceivedEventNotificationEvent(BacNetMessage message)
+        {
+            var handler = ReceivedEventNotificationEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedEventNotification(BacNetRawMessage msg)
         {
-            UnconfirmedEventNotification apdu;
             try
             {
-                apdu = new UnconfirmedEventNotification(msg.Apdu);
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new UnconfirmedEventNotification(msg.Apdu);
+                OnReceivedEventNotificationEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
             }
-            catch { return; }
-            BacNetDevice.Instance.OnNotificationEvent(apdu);
+            catch (Exception ex)
+            {
+                _logger.WarnException("Malformed UnconfirmedEventNotification: ", ex);
+            }            
         }
 
         public void ReceivedPrivateTransfer(BacNetRawMessage msg)
@@ -112,7 +140,7 @@ namespace BACSharp
 
         public void ReceivedWhoIs(BacNetRawMessage msg)
         {
-            WhoIs apdu = new WhoIs(msg.Apdu);
+            var apdu = new WhoIs(msg.Apdu);
             uint devId = BacNetDevice.Instance.DeviceId;
             if ((apdu.LowLimit != null && apdu.HighLimit != null && apdu.LowLimit.Value < devId && apdu.HighLimit.Value > devId) || (apdu.LowLimit == null || apdu.HighLimit == null))
                 BacNetDevice.Instance.Services.Unconfirmed.IAm();
@@ -131,7 +159,7 @@ namespace BACSharp
         {
             try
             {
-                ReadProperty apdu = new ReadProperty(msg.Apdu);
+                var apdu = new ReadProperty(msg.Apdu);
             }
             catch (Exception ex)
             {
@@ -139,7 +167,6 @@ namespace BACSharp
                 {
                     //Отправляем сообщение об ошибке
                 }
-                throw;
             }            
         }
 
@@ -147,72 +174,83 @@ namespace BACSharp
 
         #region Acknowledgement
 
+        public event ReceivedReadPropertyAckEventHandler ReceivedReadPropertyAckEvent;
+        public void OnReceivedReadPropertyAckEvent(BacNetMessage message)
+        {
+            var handler = ReceivedReadPropertyAckEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedReadPropertyAck(BacNetRawMessage msg)
         {
-            ReadPropertyAck apdu;
             try
             {
-                apdu = new ReadPropertyAck(msg.Apdu);
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new ReadPropertyAck(msg.Apdu);              
+                OnReceivedReadPropertyAckEvent(new BacNetMessage {Npdu = npdu, Apdu = apdu});
             }
             catch(Exception ex)
             {
                 _logger.WarnException("Malformed ReadPropertyAck: ", ex);
-                BacNetDevice.Instance.Waiter = new ArrayList();
-                return;
             }
-            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
-                BacNetDevice.Instance.Waiter = apdu.Obj.Properties[0].Values;
         }
 
+        public event ReceivedReadPropertyMultipleAckEventHandler ReceivedReadPropertyMultipleAckEvent;
+        public void OnReceivedReadPropertyMultipleAckEvent(BacNetMessage message)
+        {
+            var handler = ReceivedReadPropertyMultipleAckEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedReadPropertyMultipleAck(BacNetRawMessage msg)
         {
-            ReadPropertyMultipleAck apdu;
             try
             {
-                apdu = new ReadPropertyMultipleAck(msg.Apdu);
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new ReadPropertyMultipleAck(msg.Apdu);
+                OnReceivedReadPropertyAckEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
             }
             catch (Exception ex)
             {
                 _logger.WarnException("Malformed ReadPropertyMultipleAck: ", ex);
-                BacNetDevice.Instance.Waiter = new List<BacNetObject>();
-                return;
-            }
-            if (BacNetDevice.Instance.Waiter is int && Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
-            {
-                if (apdu.ObjectList == null)
-                    _logger.Warn("Received empty object list");
-                BacNetDevice.Instance.Waiter = apdu.ObjectList;
-            }
-
-            //RpmE
-            BacNetDevice.Instance.Services.Confirmed.RpmCallBack(apdu.InvokeId, apdu.ObjectList);
+            }            
         }
 
+        public event ReceivedErrorAckEventHandler ReceivedErrorAckEvent;
+        public void OnReceivederrorAckEvent(BacNetMessage message)
+        {
+            var handler = ReceivedErrorAckEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedErrorAck(BacNetRawMessage msg)
         {
-            ErrorAck apdu = new ErrorAck(msg.Apdu);
-            if (apdu.ServiceChoise == 12)
+            try
             {
-                ArrayList res = new ArrayList();
-                res.Add(apdu.ErrorCode);
-                if (BacNetDevice.Instance.Waiter is int &&
-                    Convert.ToInt32(BacNetDevice.Instance.Waiter) == apdu.InvokeId)
-                    BacNetDevice.Instance.Waiter = res;
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new ErrorAck(msg.Apdu);
+                OnReceivedReadPropertyAckEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
             }
-            if (apdu.ServiceChoise == 15)
+            catch (Exception ex)
             {
-                BacNetDevice.Instance.Services.Confirmed.WritePropertyCallBack(apdu.InvokeId, BacNetEnums.GetErrorMessage((byte)apdu.ErrorCode));
+                _logger.WarnException("Malformed ErrorAck: ", ex);
             }
         }
 
+        public event ReceivedSimpleAckEventHandler ReceivedSimpleAckEvent;
+        public void OnReceivedSimpleAckEvent(BacNetMessage message)
+        {
+            var handler = ReceivedSimpleAckEvent;
+            if (handler != null) handler(message);
+        }
         public void ReceivedSimpleAck(BacNetRawMessage msg)
         {
-            var npdu = new BacNetIpNpdu(msg.Npdu);
-            var apdu = new SimpleAck(msg.Apdu);
-            //WritePropertyOk
-            if (apdu.ServiceChoise == 15)
+            try
             {
-                BacNetDevice.Instance.Services.Confirmed.WritePropertyCallBack(apdu.InvokeId, "Ok");
+                var npdu = new BacNetIpNpdu(msg.Npdu);
+                var apdu = new SimpleAck(msg.Apdu);
+                OnReceivedReadPropertyAckEvent(new BacNetMessage { Npdu = npdu, Apdu = apdu });
+            }
+            catch (Exception ex)
+            {
+                _logger.WarnException("Malformed SimpleAck: ", ex);
             }
         }
 

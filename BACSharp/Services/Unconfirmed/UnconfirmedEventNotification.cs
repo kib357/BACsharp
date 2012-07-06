@@ -6,7 +6,7 @@ using BACSharp.Types;
 
 namespace BACSharp.Services.Unconfirmed
 {
-    public class UnconfirmedEventNotification
+    public class UnconfirmedEventNotification : IBacNetApdu
     {
         public BacNetUInt ProccessId { get; private set; }
         public BacNetObject Device { get; private set; }
@@ -75,6 +75,9 @@ namespace BACSharp.Services.Unconfirmed
         }
 
 
-
+        public byte[] GetBytes()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -44,9 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APDU\ConfirmedRequest.cs" />
-    <Compile Include="APDU\IBacNetApdu.cs" />
-    <Compile Include="APDU\UnconfirmedRequest.cs" />
+    <Compile Include="NPDU\IBacNetNpdu.cs" />
+    <Compile Include="Services\IBacNetApdu.cs" />
     <Compile Include="BacNetEnums.cs" />
     <Compile Include="BacNetListener.cs" />
     <Compile Include="BacNetResponse.cs" />
@@ -56,7 +55,6 @@
     <Compile Include="Network\BacNetIpNetwork.cs" />
     <Compile Include="Network\IBacNetNetwork.cs" />
     <Compile Include="NPDU\BacNetIpNpdu.cs" />
-    <Compile Include="NPDU\IBacNetNpdu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Acknowledgement\AckServices.cs" />
     <Compile Include="Services\Acknowledgement\ErrorAck.cs" />
@@ -71,7 +69,6 @@
     <Compile Include="Services\Confirmed\SubscribeCOV.cs" />
     <Compile Include="Services\Confirmed\WriteProperty.cs" />
     <Compile Include="Services\Confirmed\ReadProperty.cs" />
-    <Compile Include="Services\IBacNetService.cs" />
     <Compile Include="Services\Unconfirmed\UnconfirmedEventNotification.cs" />
     <Compile Include="Services\Unconfirmed\IAm.cs" />
     <Compile Include="Services\Unconfirmed\UnconfirmedCOVnotification.cs" />
@@ -82,6 +79,7 @@
     <Compile Include="Types\BacNetDouble.cs" />
     <Compile Include="Types\BacNetEnumeration.cs" />
     <Compile Include="Types\BacNetInt.cs" />
+    <Compile Include="Types\BacNetMessage.cs" />
     <Compile Include="Types\BacNetObjectPropertyRef.cs" />
     <Compile Include="Types\BacNetRawMessage.cs" />
     <Compile Include="Types\BacNetReal.cs" />
